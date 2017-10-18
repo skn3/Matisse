@@ -15,15 +15,14 @@
  */
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
-apply plugin: 'checkstyle'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.3"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 26
+        minSdkVersion 11
+        targetSdkVersion 25
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -34,19 +33,20 @@ android {
     }
 }
 
-ext.supportLibVersion = '26.1.0'
+ext.supportLibVersion = '25.3.1'
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "com.android.support:support-v4:${supportLibVersion}"
-    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
-    implementation "com.android.support:support-annotations:${supportLibVersion}"
-    implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
-    implementation 'it.sephiroth.android.library.imagezoom:library:1.0.4'
+    compile "com.android.support:support-v4:${supportLibVersion}"
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:support-annotations:${supportLibVersion}"
+    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
 
-    compileOnly 'com.github.bumptech.glide:glide:3.7.0'
-    compileOnly 'com.squareup.picasso:picasso:2.5.2'
+    provided 'com.github.bumptech.glide:glide:3.8.0'
+    provided 'com.squareup.picasso:picasso:2.5.2'
+    // largeimage
+    compile 'com.shizhefei:LargeImageView:1.0.9'
 }
 
 // jcenter configuration for novoda's bintray-release
@@ -55,17 +55,7 @@ publish {
     userOrg = 'zhihu'
     groupId = 'com.zhihu.android'
     artifactId = 'matisse'
-    publishVersion = '0.5.0-beta2'
+    publishVersion = '0.5.5'
     desc = 'A well-designed local image selector for Android'
     website = 'https://www.zhihu.com/'
-}
-
-task checkstyle(type:Checkstyle) {
-    description 'Runs Checkstyle inspection against matisse sourcesets.'
-    group = 'Code Quality'
-    configFile rootProject.file('checkstyle.xml')
-    ignoreFailures = false
-    showViolations true
-    classpath = files()
-    source 'src/main/java'
 }
