@@ -291,6 +291,11 @@ public final class SelectionCreator {
         return this;
     }
 
+    public SelectionCreator enablePreview(boolean b) {
+        mSelectionSpec.enablePreview = b;
+        return this;
+    }
+
     /**
      * Start to select media and wait for result.
      *

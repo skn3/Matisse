@@ -48,6 +48,7 @@ public final class SelectionSpec {
     public float thumbnailScale;
     public boolean showUseOrigin;
     public ImageEngine imageEngine;
+    public boolean enablePreview;
 
     private SelectionSpec() {
     }
@@ -80,6 +81,7 @@ public final class SelectionSpec {
         thumbnailScale = 0.5f;
         showUseOrigin = false;
         imageEngine = new GlideEngine();
+        enablePreview = false;
     }
 
     public boolean singleSelectionModeEnabled() {

@@ -63,6 +63,7 @@ public class AlbumMediaAdapter extends
         mRecyclerView = recyclerView;
     }
 
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_CAPTURE) {
