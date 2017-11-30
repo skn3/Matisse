@@ -14,7 +14,18 @@
  * limitations under the License.
  */
 apply plugin: 'com.android.library'
+apply plugin: "com.novoda.bintray-release"
 
+def publishVersionName="v0.5.1-dev1"
+buildscript {
+    repositories {
+        jcenter()
+
+    }
+    dependencies {
+        classpath "com.novoda:bintray-release:0.5.0"
+    }
+}
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -29,7 +40,21 @@ android {
     lintOptions {
         abortOnError false
     }
+    buildToolsVersion '26.0.2'
 }
+
+
+publish {
+    userOrg = "fishkingsin"
+    groupId = "com.github.nixplay"
+    artifactId = "matisse"
+    publishVersion = "$publishVersionName"
+    desc = "zhihu Matisse forwk"
+    licences = ["Apache-2.0"]
+    uploadName = "Matisse"
+    website = "https://github.com/nixplay/Matisse.git"
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
