@@ -48,6 +48,7 @@ public final class SelectionSpec {
     public float thumbnailScale;
     public ImageEngine imageEngine;
     public boolean enablePreview;
+    public boolean showUseOrigin;
 
     private SelectionSpec() {
     }

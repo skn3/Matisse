@@ -29,11 +29,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gyf.barlibrary.ImmersionBar;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
-import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
@@ -146,8 +146,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
 			mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
-			boolean useOrigin = Matisse.useOriginImage(data);
-			Toast.makeText(this, "使用原图？：" + useOrigin, Toast.LENGTH_SHORT).show();
+
 		}
 	}
 

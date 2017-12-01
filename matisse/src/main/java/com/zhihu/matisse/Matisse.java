@@ -137,4 +137,7 @@ public final class Matisse {
         return mFragment != null ? mFragment.get() : null;
     }
 
+    public static boolean useOriginImage(Intent data) {
+        return false;
+    }
 }
