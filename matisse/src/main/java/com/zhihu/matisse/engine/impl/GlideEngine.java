@@ -15,14 +15,23 @@
  */
 package com.zhihu.matisse.engine.impl;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.engine.ImageEngine;
 
@@ -45,9 +54,71 @@ public class GlideEngine implements ImageEngine {
         Glide.with(context).asBitmap().load(uri).apply(options).into(imageView);
     }
 
-    public void loadImage(Context context, int resizeX, int resizeY, ImageView imageView, Uri uri) {
+    @SuppressLint("CheckResult")
+    @Override
+    public void loadImage(Context context, int resizeX, int resizeY, final SubsamplingScaleImageView imageView, Uri uri) {
+
         RequestOptions options = (new RequestOptions()).centerCrop().override(resizeX, resizeY).priority(Priority.HIGH);
-        Glide.with(context).load(uri).apply(options).into(imageView);
+        Glide.with(context)
+                .load(uri)
+                .apply(options)
+                .into(new Target<Drawable>() {
+                    @Override
+                    public void onLoadStarted(@Nullable Drawable placeholder) {
+
+                    }
+
+                    @Override
+                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
+
+                    }
+
+                    @Override
+                    public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
+                        imageView.setImage(ImageSource.bitmap(((BitmapDrawable) resource).getBitmap()));
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                    }
+
+                    @Override
+                    public void getSize(SizeReadyCallback cb) {
+
+                    }
+
+                    @Override
+                    public void removeCallback(SizeReadyCallback cb) {
+
+                    }
+
+                    @Override
+                    public void setRequest(@Nullable Request request) {
+
+                    }
+
+                    @Nullable
+                    @Override
+                    public Request getRequest() {
+                        return null;
+                    }
+
+                    @Override
+                    public void onStart() {
+
+                    }
+
+                    @Override
+                    public void onStop() {
+
+                    }
+
+                    @Override
+                    public void onDestroy() {
+
+                    }
+                });
     }
 
     public void loadGifImage(Context context, int resizeX, int resizeY, ImageView imageView, Uri uri) {
