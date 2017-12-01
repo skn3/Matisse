@@ -20,8 +20,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.widget.ImageView;
 
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
-
 /**
  * Image loader interface. There are predefined {@link com.zhihu.matisse.engine.impl.GlideEngine}
  */
@@ -60,7 +58,7 @@ public interface ImageEngine {
      * @param imageView ImageView widget
      * @param uri       Uri of the loaded image
      */
-    void loadImage(Context context, int resizeX, int resizeY, SubsamplingScaleImageView imageView, Uri uri);
+    void loadImage(Context context, int resizeX, int resizeY, ImageView imageView, Uri uri);
 
     /**
      * Load a gif image resource.

@@ -21,43 +21,38 @@ import android.net.Uri;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.request.RequestOptions;
-import com.zhihu.matisse.R;
+import com.squareup.picasso.Picasso;
 import com.zhihu.matisse.engine.ImageEngine;
 
 /**
- * {@link ImageEngine} implementation using Glide.
+ * {@link ImageEngine} implementation using Picasso.
  */
 
-public class GlideEngine implements ImageEngine {
+public class PicassoEngine implements ImageEngine {
 
-    public GlideEngine() {
-    }
-
+    @Override
     public void loadThumbnail(Context context, int resize, Drawable placeholder, ImageView imageView, Uri uri) {
-        RequestOptions options = (new RequestOptions()).centerCrop().placeholder(placeholder).error(R.drawable.error).override(resize, resize);
-        Glide.with(context).asBitmap().load(uri).apply(options).into(imageView);
+        Picasso.with(context).load(uri).placeholder(placeholder)
+                .resize(resize, resize)
+                .centerCrop()
+                .into(imageView);
     }
 
-    public void loadGifThumbnail(Context context, int resize, Drawable placeholder, ImageView imageView, Uri uri) {
-        RequestOptions options = (new RequestOptions()).centerCrop().placeholder(placeholder).error(R.drawable.error).override(resize, resize);
-        Glide.with(context).asBitmap().load(uri).apply(options).into(imageView);
+    @Override
+    public void loadGifThumbnail(Context context, int resize, Drawable placeholder, ImageView imageView,
+                                 Uri uri) {
+        loadThumbnail(context, resize, placeholder, imageView, uri);
     }
 
+    @Override
     public void loadImage(Context context, int resizeX, int resizeY, ImageView imageView, Uri uri) {
-        RequestOptions options = (new RequestOptions()).centerCrop().override(resizeX, resizeY).priority(Priority.HIGH);
-        Glide.with(context).load(uri).apply(options).into(imageView);
+        Picasso.with(context).load(uri).resize(resizeX, resizeY).priority(Picasso.Priority.HIGH)
+                .centerInside().into(imageView);
     }
 
+    @Override
     public void loadGifImage(Context context, int resizeX, int resizeY, ImageView imageView, Uri uri) {
-        RequestOptions options = (new RequestOptions()).centerCrop().override(resizeX, resizeY).priority(Priority.HIGH);
-        Glide.with(context).asGif().load(uri).apply(options).into(imageView);
-    }
-
-
-    public boolean supportAnimatedGif() {
-        return true;
+        loadImage(context, resizeX, resizeY, imageView, uri);
     }
 
     @Override
@@ -68,5 +63,10 @@ public class GlideEngine implements ImageEngine {
     @Override
     public void resumeLoad(Context context, String tag) {
         Glide.with(context).resumeRequests();
+    }
+
+    @Override
+    public boolean supportAnimatedGif() {
+        return false;
     }
 }
