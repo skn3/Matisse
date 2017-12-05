@@ -29,11 +29,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gyf.barlibrary.ImmersionBar;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
+import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
@@ -44,164 +44,140 @@ import io.reactivex.disposables.Disposable;
 
 public class SampleActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final int REQUEST_CODE_CHOOSE = 23;
 
-	private static final int REQUEST_CODE_CHOOSE = 23;
+    private UriAdapter mAdapter;
 
-	private UriAdapter mAdapter;
-	private ImmersionBar mImmersionBar;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        findViewById(R.id.zhihu).setOnClickListener(this);
+        findViewById(R.id.dracula).setOnClickListener(this);
+        findViewById(R.id.custom).setOnClickListener(this);
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(mAdapter = new UriAdapter());
+    }
 
-		/**
-		 * 沉浸式状态栏
-		 */
-		mImmersionBar = ImmersionBar.with(this);
-		mImmersionBar.fitsSystemWindows(true)  //使用该属性,必须指定状态栏颜色
-				.statusBarColor(com.zhihu.matisse.R.color.white)// 指定状态栏颜色
-				.statusBarDarkFont(true, 0.2f);
-		mImmersionBar.init();   //所有子类都将继承这些相同的属性
+    @Override
+    public void onClick(final View v) {
+        RxPermissions rxPermissions = new RxPermissions(this);
+        rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-		setContentView(R.layout.activity_main);
-		findViewById(R.id.zhihu).setOnClickListener(this);
-		findViewById(R.id.dracula).setOnClickListener(this);
+                    }
 
-		RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-		recyclerView.setLayoutManager(new LinearLayoutManager(this));
-		recyclerView.setAdapter(mAdapter = new UriAdapter());
-	}
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        if (aBoolean) {
+                            handleClick(v);
+                        } else {
+                            Toast.makeText(SampleActivity.this, R.string.permission_request_denied, Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    }
 
-	@Override
-	public void onClick(final View v) {
-		RxPermissions rxPermissions = new RxPermissions(this);
-		rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-				.subscribe(new Observer<Boolean>() {
-					@Override
-					public void onSubscribe(Disposable d) {
+                    @Override
+                    public void onError(Throwable e) {
 
-					}
+                    }
 
-					@Override
-					public void onNext(Boolean aBoolean) {
-						if (aBoolean) {
-							switch (v.getId()) {
-								case R.id.zhihu:
-									Matisse.from(SampleActivity.this)
-											.choose(MimeType.ofAll(), false)
-											.countable(true)
-											.capture(true)
-											.captureStrategy(
-													new CaptureStrategy(true, getApplication().getPackageName()+".fileprovider"))
-											.maxSelectable(9)
-											.addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
-											.gridExpectedSize(
-													getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
-											.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-											.thumbnailScale(0.85f)
-											.imageEngine(new GlideEngine())
-											.showUseOrigin(true)
-											.forResult(REQUEST_CODE_CHOOSE);
-									break;
-								case R.id.dracula:
-									Matisse.from(SampleActivity.this)
-											.choose(MimeType.ofAll(), false)
-											.countable(true)
-											.capture(true)
-											.captureStrategy(
-													new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
-											.maxSelectable(9)
-											.addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
-											.gridExpectedSize(
-													getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
-											.restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-											.thumbnailScale(0.85f)
-											.imageEngine(new GlideEngine())
-											.theme(R.style.Matisse_Dracula)
-											.showUseOrigin(false)
-											.forResult(REQUEST_CODE_CHOOSE);
-									break;
-							}
-							mAdapter.setData(null, null);
-						} else {
-							Toast.makeText(SampleActivity.this, R.string.permission_request_denied, Toast.LENGTH_LONG)
-									.show();
-						}
-					}
+                    @Override
+                    public void onComplete() {
 
-					@Override
-					public void onError(Throwable e) {
+                    }
+                });
+    }
 
-					}
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
+            mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
+        }
+    }
 
-					@Override
-					public void onComplete() {
+    private void handleClick(View v) {
+        switch (v.getId()) {
+            case R.id.zhihu:
+                Matisse.from(SampleActivity.this)
+                        .choose(MimeType.ofAll(), false)
+                        .countable(true)
+                        .capture(true)
+                        .captureStrategy(
+                                new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
+                        .maxSelectable(9)
+                        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                        .gridExpectedSize(
+                                getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+                        .thumbnailScale(0.85f)
+                        .imageEngine(new GlideEngine())
+                        .forResult(REQUEST_CODE_CHOOSE);
+                break;
+            case R.id.dracula:
+                Matisse.from(SampleActivity.this)
+                        .choose(MimeType.ofImage())
+                        .theme(R.style.Matisse_Dracula)
+                        .countable(false)
+                        .maxSelectable(9)
+                        .imageEngine(new PicassoEngine())
+                        .forResult(REQUEST_CODE_CHOOSE);
+                break;
 
-					}
-				});
-	}
+            case R.id.custom:
+                startActivity(new Intent(this, CustomMatisseActivity.class));
+            default:
+        }
+        mAdapter.setData(null, null);
+    }
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
-			mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
+    private static class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> {
 
-		}
-	}
+        private List<Uri> mUris;
+        private List<String> mPaths;
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		if (mImmersionBar != null) {
-			//必须调用该方法，防止内存泄漏，不调用该方法，如果界面bar发生改变，
-			// 在不关闭app的情况下，退出此界面再进入将记忆最后一次bar改变的状态
-			mImmersionBar.destroy();
-		}
-	}
+        void setData(List<Uri> uris, List<String> paths) {
+            mUris = uris;
+            mPaths = paths;
+            notifyDataSetChanged();
+        }
 
-	private static class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> {
+        @Override
+        public UriViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            return new UriViewHolder(
+                    LayoutInflater.from(parent.getContext()).inflate(R.layout.uri_item, parent, false));
+        }
 
-		private List<Uri> mUris;
-		private List<String> mPaths;
+        @Override
+        public void onBindViewHolder(UriViewHolder holder, int position) {
+            holder.mUri.setText(mUris.get(position).toString());
+            holder.mPath.setText(mPaths.get(position));
 
-		void setData(List<Uri> uris, List<String> paths) {
-			mUris = uris;
-			mPaths = paths;
-			notifyDataSetChanged();
-		}
+            holder.mUri.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
+            holder.mPath.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
+        }
 
-		@Override
-		public UriViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-			return new UriViewHolder(
-					LayoutInflater.from(parent.getContext()).inflate(R.layout.uri_item, parent, false));
-		}
+        @Override
+        public int getItemCount() {
+            return mUris == null ? 0 : mUris.size();
+        }
 
-		@Override
-		public void onBindViewHolder(UriViewHolder holder, int position) {
-			holder.mUri.setText(mUris.get(position).toString());
-			holder.mPath.setText(mPaths.get(position));
+        static class UriViewHolder extends RecyclerView.ViewHolder {
 
-			holder.mUri.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
-			holder.mPath.setAlpha(position % 2 == 0 ? 1.0f : 0.54f);
-		}
+            private TextView mUri;
+            private TextView mPath;
 
-		@Override
-		public int getItemCount() {
-			return mUris == null ? 0 : mUris.size();
-		}
-
-		static class UriViewHolder extends RecyclerView.ViewHolder {
-
-			private TextView mUri;
-			private TextView mPath;
-
-			UriViewHolder(View contentView) {
-				super(contentView);
-				mUri = (TextView) contentView.findViewById(R.id.uri);
-				mPath = (TextView) contentView.findViewById(R.id.path);
-			}
-		}
-	}
+            UriViewHolder(View contentView) {
+                super(contentView);
+                mUri = (TextView) contentView.findViewById(R.id.uri);
+                mPath = (TextView) contentView.findViewById(R.id.path);
+            }
+        }
+    }
 
 }
