@@ -47,4 +47,11 @@
         android:textColor="@android:color/white"
         android:textSize="12sp"
         android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/video_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left|bottom"
+        android:src="@drawable/ic_video"/>
 </merge>
