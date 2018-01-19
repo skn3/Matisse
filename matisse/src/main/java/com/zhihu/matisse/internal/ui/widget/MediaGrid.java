@@ -39,6 +39,7 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
     private Item mMedia;
     private PreBindInfo mPreBindInfo;
     private OnMediaGridClickListener mListener;
+    private ImageView mVideoIcon;
 
     public MediaGrid(Context context) {
         super(context);
@@ -57,6 +58,7 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
         mCheckView = (CheckView) findViewById(R.id.check_view);
         mGifTag = (ImageView) findViewById(R.id.gif);
         mVideoDuration = (TextView) findViewById(R.id.video_duration);
+        mVideoIcon = (ImageView) findViewById(R.id.video_icon);
 
         mThumbnail.setOnClickListener(this);
         mCheckView.setOnClickListener(this);
@@ -122,9 +124,11 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
     private void setVideoDuration() {
         if (mMedia.isVideo()) {
             mVideoDuration.setVisibility(VISIBLE);
+            mVideoIcon.setVisibility(VISIBLE);
             mVideoDuration.setText(DateUtils.formatElapsedTime(mMedia.duration / 1000));
         } else {
             mVideoDuration.setVisibility(GONE);
+            mVideoIcon.setVisibility(GONE);
         }
     }
 
