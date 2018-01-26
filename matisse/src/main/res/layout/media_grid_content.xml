@@ -52,6 +52,9 @@
         android:id="@+id/video_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left|bottom"
-        android:src="@drawable/ic_video"/>
+        android:layout_gravity="bottom|left|start"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:src="@drawable/ic_video"
+        android:tint="@android:color/white"/>
 </merge>
