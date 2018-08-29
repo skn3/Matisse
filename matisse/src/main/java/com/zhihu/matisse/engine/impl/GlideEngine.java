@@ -22,7 +22,13 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.zhihu.matisse.engine.ImageEngine;
+import com.zhihu.matisse.internal.utils.PhotoMetadataUtils;
+import java.io.File;
 
 /**
  * {@link ImageEngine} implementation using Glide.
@@ -54,13 +60,18 @@ public class GlideEngine implements ImageEngine {
     }
 
     @Override
-    public void loadImage(Context context, int resizeX, int resizeY, ImageView imageView, Uri uri) {
+    public void loadImage(Context context, int resizeX, int resizeY, final SubsamplingScaleImageView imageView, Uri uri) {
         Glide.with(context)
-                .load(uri)
-                .override(resizeX, resizeY)
-                .priority(Priority.HIGH)
-                .fitCenter()
-                .into(imageView);
+            .load(uri)
+            .downloadOnly(new SimpleTarget<File>() {
+                @Override public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
+                    if (PhotoMetadataUtils.isLongImage(resource.getAbsolutePath(), 3)) {
+                        imageView.setOrientation(PhotoMetadataUtils.getOrientation(resource.getAbsolutePath()));
+                        imageView.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_START);
+                    }
+                    imageView.setImage(ImageSource.uri(Uri.fromFile(resource)));
+                }
+            });
     }
 
     @Override
