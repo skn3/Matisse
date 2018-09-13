@@ -67,9 +67,9 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (mListener != null) {
-            if (v == mThumbnail && SelectionSpec.getInstance().enablePreview) {
+            if (v == mThumbnail && SelectionSpec.getInstance().previewable) {
                 mListener.onThumbnailClicked(mThumbnail, mMedia, mPreBindInfo.mViewHolder);
-            } else if (v == mCheckView || (v == mThumbnail && !SelectionSpec.getInstance().enablePreview)) {
+            } else if (v == mCheckView || (v == mThumbnail && !SelectionSpec.getInstance().previewable)) {
                 mListener.onCheckViewClicked(mCheckView, mMedia, mPreBindInfo.mViewHolder);
             }
         }

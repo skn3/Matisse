@@ -1,7 +1,8 @@
 ![Image](/image/banner.png)
 
 # Matisse
-[![Build Status](https://travis-ci.org/zhihu/Matisse.svg)](https://travis-ci.org/zhihu/Matisse)  
+[![Build Status](https://travis-ci.org/zhihu/Matisse.svg)](https://travis-ci.org/zhihu/Matisse) [ ![Download](https://api.bintray.com/packages/zhihu/maven/matisse/images/download.svg) ](https://bintray.com/zhihu/maven/matisse/_latestVersion)
+
 Matisse is a well-designed local image and video selector for Android. You can  
 - Use it in Activity or Fragment
 - Select images including JPEG, PNG, GIF and videos including MPEG, MP4 
@@ -23,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.zhihu.android:matisse:0.4.3'
+    compile 'com.zhihu.android:matisse:$latest_version'
 }
 ```
 
@@ -91,6 +92,16 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 }
 ```
 
+#### For Glide V4
+
+To be honest,the library can't supply GlideEngine for Glide both v3 and v4 at the same time. (Anyone who
+ have good idea to achieve this. PR is welcomed) 
+ 
+GlideEngine with Glide v3 is default.
+
+So if your project's glide version is 4.0+ ,then you must realize GlideEngine by yourself. More details
+could refer with [Glide4Engine](https://github.com/zhihu/Matisse/blob/master/sample/src/main/java/com/zhihu/matisse/sample/Glide4Engine.java) in the sample.
+
 #### More
 Find more details about Matisse in [wiki](https://github.com/zhihu/Matisse/wiki).
 
@@ -115,3 +126,5 @@ This library is inspired by [Laevatein](https://github.com/nohana/Laevatein) and
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
+
