@@ -248,6 +248,7 @@ public class MatisseActivity extends AppCompatActivity implements
                     .beginTransaction()
                     .replace(R.id.container, fragment, MediaSelectionFragment.class.getSimpleName())
                     .commitAllowingStateLoss();
+            updateBottomToolbar();
 
         }
     }
