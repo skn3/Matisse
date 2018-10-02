@@ -167,7 +167,7 @@ public class SelectedItemCollection {
     }
 
     public IncapableCause isAcceptable(Item item) {
-        if (maxSelectableReached()) {
+        if (maxSelectableReached(item)) {
             int maxSelectable = currentMaxSelectable();
             String cause;
 
@@ -192,20 +192,20 @@ public class SelectedItemCollection {
         return PhotoMetadataUtils.isAcceptable(mContext, item);
     }
 
-    public boolean maxSelectableReached() {
+    public boolean maxSelectableReached(Item item) {
         if (mCollectionType == COLLECTION_MIXED){
             int nVideo = 0;
             int nImage = 0;
             for (Item i : mItems) {
-                if (i.isImage()) nVideo ++;
-                if (i.isVideo()) nImage++;
+                if (i.isImage()) nImage++;
+                if (i.isVideo()) nVideo++;
             }
             SelectionSpec spec = SelectionSpec.getInstance();
-            if(nVideo == spec.maxImageSelectable){
+            if(nVideo == spec.maxVideoSelectable && item.isVideo()){
                 return true;
-            } else if(nImage == spec.maxImageSelectable){
+            } else if(nImage == spec.maxImageSelectable && (item.isImage())){
                 return true;
-            } else if((nImage+nVideo) == spec.maxImageSelectable){
+            } else if((nImage+nVideo) == spec.maxImageSelectable && (item.isImage() || item.isVideo())){
                 return true;
             }
         }
@@ -221,8 +221,29 @@ public class SelectedItemCollection {
             return spec.maxImageSelectable;
         } else if (mCollectionType == COLLECTION_VIDEO) {
             return spec.maxVideoSelectable;
+        } else if (mCollectionType == COLLECTION_MIXED) {
+            return mixMediaCount();
         } else {
             return spec.maxSelectable;
+        }
+    }
+
+    private int mixMediaCount() {
+        SelectionSpec spec = SelectionSpec.getInstance();
+        int nVideo = 0;
+        int nImage = 0;
+        for (Item i : mItems) {
+            if (i.isImage()) nImage++;
+            if (i.isVideo()) nVideo++;
+        }
+        if(nVideo == spec.maxVideoSelectable){
+            return nVideo;
+        } else if(nImage == spec.maxImageSelectable){
+            return nImage;
+        } else if((nImage+nVideo) == spec.maxImageSelectable){
+            return (nImage+nVideo);
+        } else {
+            return spec.maxImageSelectable;
         }
     }
 
