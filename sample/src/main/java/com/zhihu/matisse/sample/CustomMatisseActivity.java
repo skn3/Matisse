@@ -77,6 +77,8 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
         RadioButton picassoRadioButton = (RadioButton) findViewById(R.id.rb_picasso);
         RadioButton uilRadioButton = (RadioButton) findViewById(R.id.rb_uil);
         EditText selectCountEditor = (EditText) findViewById(R.id.et_selectable_count);
+        EditText selectVideoCountEditor = (EditText) findViewById(R.id.et_video_selectable_count);
+
         CheckBox countableCheckBox = (CheckBox) findViewById(R.id.cb_countable);
         CheckBox captureCheckBox = (CheckBox) findViewById(R.id.cb_capture);
 
@@ -100,7 +102,9 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
         }
 
         String maxCount = selectCountEditor.getText().toString();
+        String maxVideoCount = selectVideoCountEditor.getText().toString();
         int maxSelectable = Integer.parseInt(maxCount);
+        int maxVideoSeletable = Integer.parseInt(maxVideoCount);
 
         int theme = R.style.Matisse_Dracula;
         if (zhihuRadioButton.isChecked()) {
@@ -123,7 +127,8 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
                 .captureStrategy(
                         new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
                 .countable(countable)
-                .maxSelectable(maxSelectable)
+//                .maxSelectable(maxSelectable)
+                .maxSelectablePerMediaType(maxSelectable, maxVideoSeletable)
                 .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                 .gridExpectedSize(
                         getResources().getDimensionPixelSize(R.dimen.grid_expected_size))

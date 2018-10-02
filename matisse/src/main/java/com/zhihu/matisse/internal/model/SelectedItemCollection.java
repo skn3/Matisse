@@ -193,6 +193,22 @@ public class SelectedItemCollection {
     }
 
     public boolean maxSelectableReached() {
+        if (mCollectionType == COLLECTION_MIXED){
+            int nVideo = 0;
+            int nImage = 0;
+            for (Item i : mItems) {
+                if (i.isImage()) nVideo ++;
+                if (i.isVideo()) nImage++;
+            }
+            SelectionSpec spec = SelectionSpec.getInstance();
+            if(nVideo == spec.maxImageSelectable){
+                return true;
+            } else if(nImage == spec.maxImageSelectable){
+                return true;
+            } else if((nImage+nVideo) == spec.maxImageSelectable){
+                return true;
+            }
+        }
         return mItems.size() == currentMaxSelectable();
     }
 
@@ -201,7 +217,7 @@ public class SelectedItemCollection {
         SelectionSpec spec = SelectionSpec.getInstance();
         if (spec.maxSelectable > 0) {
             return spec.maxSelectable;
-        } else if (mCollectionType == COLLECTION_IMAGE) {
+        }else if (mCollectionType == COLLECTION_IMAGE) {
             return spec.maxImageSelectable;
         } else if (mCollectionType == COLLECTION_VIDEO) {
             return spec.maxVideoSelectable;
