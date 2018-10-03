@@ -48,7 +48,6 @@ public class CheckView extends View {
     private int mCheckedNum;
     private Paint mStrokePaint;
     private Paint mBackgroundPaint;
-    private Paint mForegroundPaint;
     private TextPaint mTextPaint;
     private Paint mShadowPaint;
     private Drawable mCheckDrawable;
@@ -134,18 +133,17 @@ public class CheckView extends View {
 
         // draw outer and inner shadow
         initShadowPaint();
+        canvas.drawCircle((float) SIZE * mDensity / 2, (float) SIZE * mDensity / 2,
+                (STROKE_RADIUS + STROKE_WIDTH / 2 + SHADOW_WIDTH) * mDensity, mShadowPaint);
 
+        // draw white stroke
+        canvas.drawCircle((float) SIZE * mDensity / 2, (float) SIZE * mDensity / 2,
+                STROKE_RADIUS * mDensity, mStrokePaint);
 
         // draw content
         if (mCountable) {
             if (mCheckedNum != UNCHECKED) {
                 initBackgroundPaint();
-                canvas.drawCircle((float) SIZE * mDensity / 2, (float) SIZE * mDensity / 2,
-                        (STROKE_RADIUS + STROKE_WIDTH / 2 + SHADOW_WIDTH) * mDensity, mShadowPaint);
-
-                // draw white stroke
-                canvas.drawCircle((float) SIZE * mDensity / 2, (float) SIZE * mDensity / 2,
-                        STROKE_RADIUS * mDensity, mStrokePaint);
                 canvas.drawCircle((float) SIZE * mDensity / 2, (float) SIZE * mDensity / 2,
                         BG_RADIUS * mDensity, mBackgroundPaint);
                 initTextPaint();
@@ -157,12 +155,6 @@ public class CheckView extends View {
         } else {
             if (mChecked) {
                 initBackgroundPaint();
-                canvas.drawCircle((float) SIZE * mDensity / 2, (float) SIZE * mDensity / 2,
-                        (STROKE_RADIUS + STROKE_WIDTH / 2 + SHADOW_WIDTH) * mDensity, mShadowPaint);
-
-                // draw white stroke
-                canvas.drawCircle((float) SIZE * mDensity / 2, (float) SIZE * mDensity / 2,
-                        STROKE_RADIUS * mDensity, mStrokePaint);
                 canvas.drawCircle((float) SIZE * mDensity / 2, (float) SIZE * mDensity / 2,
                         BG_RADIUS * mDensity, mBackgroundPaint);
 
