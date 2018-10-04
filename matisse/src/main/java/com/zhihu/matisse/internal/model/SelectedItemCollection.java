@@ -193,14 +193,15 @@ public class SelectedItemCollection {
     }
 
     public boolean maxSelectableReached(Item item) {
-        if (mCollectionType == COLLECTION_MIXED){
+        SelectionSpec spec = SelectionSpec.getInstance();
+        if (mCollectionType == COLLECTION_MIXED || (spec.maxVideoSelectable > 0 && spec.maxImageSelectable > 0)){
             int nVideo = 0;
             int nImage = 0;
             for (Item i : mItems) {
                 if (i.isImage()) nImage++;
                 if (i.isVideo()) nVideo++;
             }
-            SelectionSpec spec = SelectionSpec.getInstance();
+
             if(nVideo == spec.maxVideoSelectable && item.isVideo()){
                 return true;
             } else if(nImage == spec.maxImageSelectable && (item.isImage())){
@@ -208,8 +209,10 @@ public class SelectedItemCollection {
             } else if((nImage+nVideo) == spec.maxImageSelectable && (item.isImage() || item.isVideo())){
                 return true;
             }
+        } else {
+            return mItems.size() == currentMaxSelectable();
         }
-        return mItems.size() == currentMaxSelectable();
+        return false;
     }
 
     // depends
@@ -236,12 +239,12 @@ public class SelectedItemCollection {
             if (i.isImage()) nImage++;
             if (i.isVideo()) nVideo++;
         }
-        if(nVideo == spec.maxVideoSelectable){
-            return nVideo;
+        if((nImage+nVideo) == spec.maxImageSelectable){
+            return (nImage+nVideo);
         } else if(nImage == spec.maxImageSelectable){
             return nImage;
-        } else if((nImage+nVideo) == spec.maxImageSelectable){
-            return (nImage+nVideo);
+        } if(nVideo == spec.maxVideoSelectable){
+            return nVideo;
         } else {
             return spec.maxImageSelectable;
         }
