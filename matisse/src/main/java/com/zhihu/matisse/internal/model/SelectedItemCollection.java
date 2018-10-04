@@ -69,6 +69,7 @@ public class SelectedItemCollection {
             List<Item> saved = bundle.getParcelableArrayList(STATE_SELECTION);
             mItems = new LinkedHashSet<>(saved);
             mCollectionType = bundle.getInt(STATE_COLLECTION_TYPE, COLLECTION_UNDEFINED);
+            refineCollectionType();
         }
     }
 
@@ -218,7 +219,9 @@ public class SelectedItemCollection {
     // depends
     private int currentMaxSelectable() {
         SelectionSpec spec = SelectionSpec.getInstance();
-        if (spec.maxSelectable > 0) {
+        if (mCollectionType == COLLECTION_MIXED || (spec.maxVideoSelectable > 0 && spec.maxImageSelectable > 0)) {
+            return mixMediaCount();
+        } else if (spec.maxSelectable > 0) {
             return spec.maxSelectable;
         }else if (mCollectionType == COLLECTION_IMAGE) {
             return spec.maxImageSelectable;
