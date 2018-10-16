@@ -16,6 +16,7 @@
 package com.zhihu.matisse.internal.ui;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
@@ -37,11 +38,12 @@ import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.entity.SelectionSpec;
 import com.zhihu.matisse.internal.utils.PhotoMetadataUtils;
-import java.io.File;
+import com.zhihu.matisse.listener.OnFragmentInteractionListener;
 
 public class PreviewItemFragment extends Fragment {
 
     private static final String ARGS_ITEM = "args_item";
+    private OnFragmentInteractionListener mListener;
 
     public static PreviewItemFragment newInstance(Item item) {
         PreviewItemFragment fragment = new PreviewItemFragment();
@@ -106,5 +108,23 @@ public class PreviewItemFragment extends Fragment {
     public void resetView() {
         if (getView() != null) {
         }
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 }

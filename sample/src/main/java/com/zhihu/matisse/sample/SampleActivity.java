@@ -31,6 +31,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import cc.shinichi.library.ImagePreview;
+import cc.shinichi.library.bean.ImageInfo;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -40,6 +42,7 @@ import com.zhihu.matisse.internal.entity.CaptureStrategy;
 import com.zhihu.matisse.listener.OnCheckedListener;
 import com.zhihu.matisse.listener.OnSelectedListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observer;
@@ -83,8 +86,8 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                                             .countable(true)
                                             .capture(true)
                                             .captureStrategy(
-                                                    new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
-                                            .maxSelectable(9)
+                                                    new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider","test"))
+                                            .maxSelectable(30)
                                             .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                                             .gridExpectedSize(
                                                     getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
@@ -102,6 +105,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                                             })
                                             .originalEnable(false)
                                             .maxOriginalSize(10)
+                                            .autoHideToolbarOnSingleTap(true)
                                             .setOnCheckedListener(new OnCheckedListener() {
                                                 @Override
                                                 public void onCheck(boolean isChecked) {
@@ -150,6 +154,23 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
             mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
+
+            List<String> paths = Matisse.obtainPathResult(data);
+            ImageInfo imageInfo;
+            List<ImageInfo> imageInfoList = new ArrayList<>();
+            for (int i = 0; i < paths.size(); i++) {
+                imageInfo = new ImageInfo();
+                imageInfo.setThumbnailUrl(paths.get(i));
+                imageInfo.setOriginUrl(paths.get(i));
+                imageInfoList.add(imageInfo);
+                imageInfo = null;
+            }
+            ImagePreview.getInstance().setContext(this)
+                .setImageInfoList(imageInfoList)
+                .setShowCloseButton(false)
+                .setShowDownButton(false)
+                .setLoadStrategy(ImagePreview.LoadStrategy.AlwaysOrigin).start();
+
             Log.e("OnActivityResult ", String.valueOf(Matisse.obtainOriginalState(data)));
         }
     }
