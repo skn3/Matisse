@@ -128,6 +128,7 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
                         new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
                 .countable(countable)
 //                .maxSelectable(maxSelectable)
+                .enablePreview(false)
                 .maxSelectablePerMediaType(maxSelectable, maxVideoSeletable)
                 .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                 .gridExpectedSize(
