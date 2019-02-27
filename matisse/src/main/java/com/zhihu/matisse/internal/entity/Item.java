@@ -102,15 +102,30 @@ public class Item implements Parcelable {
     }
 
     public boolean isImage() {
-        return MimeType.isImage(mimeType);
+        if (mimeType == null) return false;
+        return mimeType.equals(MimeType.JPEG.toString())
+                || mimeType.equals(MimeType.PNG.toString())
+                || mimeType.equals(MimeType.GIF.toString())
+                || mimeType.equals(MimeType.BMP.toString())
+                || mimeType.equals(MimeType.WEBP.toString());
     }
 
     public boolean isGif() {
-        return MimeType.isGif(mimeType);
+        if (mimeType == null) return false;
+        return mimeType.equals(MimeType.GIF.toString());
     }
 
     public boolean isVideo() {
-        return MimeType.isVideo(mimeType);
+        if (mimeType == null) return false;
+        return mimeType.equals(MimeType.MPEG.toString())
+                || mimeType.equals(MimeType.MP4.toString())
+                || mimeType.equals(MimeType.QUICKTIME.toString())
+                || mimeType.equals(MimeType.THREEGPP.toString())
+                || mimeType.equals(MimeType.THREEGPP2.toString())
+                || mimeType.equals(MimeType.MKV.toString())
+                || mimeType.equals(MimeType.WEBM.toString())
+                || mimeType.equals(MimeType.TS.toString())
+                || mimeType.equals(MimeType.AVI.toString());
     }
 
     @Override
@@ -122,9 +137,9 @@ public class Item implements Parcelable {
         Item other = (Item) obj;
         return id == other.id
                 && (mimeType != null && mimeType.equals(other.mimeType)
-                    || (mimeType == null && other.mimeType == null))
+                || (mimeType == null && other.mimeType == null))
                 && (uri != null && uri.equals(other.uri)
-                    || (uri == null && other.uri == null))
+                || (uri == null && other.uri == null))
                 && size == other.size
                 && duration == other.duration;
     }

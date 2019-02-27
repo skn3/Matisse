@@ -22,6 +22,7 @@ import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,10 +36,11 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
     private CheckView mCheckView;
     private ImageView mGifTag;
     private TextView mVideoDuration;
-
+    private FrameLayout mVideoInfoLayout;
     private Item mMedia;
     private PreBindInfo mPreBindInfo;
     private OnMediaGridClickListener mListener;
+    private ImageView mVideoIcon;
 
     public MediaGrid(Context context) {
         super(context);
@@ -56,7 +58,9 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
         mThumbnail = (ImageView) findViewById(R.id.media_thumbnail);
         mCheckView = (CheckView) findViewById(R.id.check_view);
         mGifTag = (ImageView) findViewById(R.id.gif);
+        mVideoInfoLayout = findViewById(R.id.video_info);
         mVideoDuration = (TextView) findViewById(R.id.video_duration);
+        mVideoIcon = (ImageView) findViewById(R.id.video_icon);
 
         mThumbnail.setOnClickListener(this);
         mCheckView.setOnClickListener(this);
@@ -65,9 +69,9 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (mListener != null) {
-            if (v == mThumbnail) {
+            if (v == mThumbnail && SelectionSpec.getInstance().enablePreview) {
                 mListener.onThumbnailClicked(mThumbnail, mMedia, mPreBindInfo.mViewHolder);
-            } else if (v == mCheckView) {
+            } else if (v == mCheckView || (v == mThumbnail && !SelectionSpec.getInstance().enablePreview)) {
                 mListener.onCheckViewClicked(mCheckView, mMedia, mPreBindInfo.mViewHolder);
             }
         }
@@ -121,10 +125,10 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
 
     private void setVideoDuration() {
         if (mMedia.isVideo()) {
-            mVideoDuration.setVisibility(VISIBLE);
+            mVideoInfoLayout.setVisibility(VISIBLE);
             mVideoDuration.setText(DateUtils.formatElapsedTime(mMedia.duration / 1000));
         } else {
-            mVideoDuration.setVisibility(GONE);
+            mVideoInfoLayout.setVisibility(GONE);
         }
     }
 
@@ -148,7 +152,6 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
         Drawable mPlaceholder;
         boolean mCheckViewCountable;
         RecyclerView.ViewHolder mViewHolder;
-
         public PreBindInfo(int resize, Drawable placeholder, boolean checkViewCountable,
                            RecyclerView.ViewHolder viewHolder) {
             mResize = resize;
