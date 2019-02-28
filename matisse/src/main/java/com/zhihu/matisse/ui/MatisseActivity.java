@@ -298,12 +298,19 @@ public class MatisseActivity extends AppCompatActivity implements
     }
 
     protected String getMimeType(String path) {
-        String type = null;
-        String extension = MimeTypeMap.getFileExtensionFromUrl(path);
-        if (extension != null) {
-            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        int i = path.lastIndexOf('.');
+        String extension = "";
+        if (i > 0) {
+            extension = "file."+path.substring(i+1);
         }
-        return type;
+
+        String type = "";
+        String ext = MimeTypeMap.getFileExtensionFromUrl(extension);
+        if (ext != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+        }
+
+        return (type == null) ? "" : type;
     }
 
     private void updateBottomToolbar() {
