@@ -16,15 +16,18 @@
 package com.zhihu.matisse.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -329,8 +332,39 @@ public class MatisseActivity extends AppCompatActivity implements
         } else if (v.getId() == R.id.button_apply) {
             Intent result = new Intent();
             ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
-            result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris);
             ArrayList<String> selectedPaths = (ArrayList<String>) mSelectedCollection.asListOfString();
+
+            int brokenItems = 0;
+            for (int i = 0 ; i < selectedUris.size() ; i++){
+
+                String mimeType = getMimeType(selectedPaths.get(i).toLowerCase());
+                if (mimeType.contains("video")) {
+                    //precheck
+                    MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+                    mediaMetadataRetriever.setDataSource(this, Uri.parse(selectedPaths.get(i)));
+                    long durationMs = 0;
+                    String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                    if (duration != null) {
+                        durationMs = Long.parseLong(duration);
+                    }
+                    if (durationMs <= 0) {
+                        //prompt
+                        brokenItems++;
+                    }
+                }
+            }
+            if(brokenItems > 0) {
+
+                Resources res = getResources();
+                String alert_title = res.getQuantityString(R.plurals.alert_title_unsupport_items, brokenItems, brokenItems);
+                new AlertDialog.Builder(this)
+                        .setMessage(alert_title)
+                        .setPositiveButton(android.R.string.yes, null)
+                        .show();
+                return;
+            }
+
+            result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris);
             result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths);
             setResult(RESULT_OK, result);
             finish();
