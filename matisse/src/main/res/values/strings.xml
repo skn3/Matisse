@@ -18,7 +18,7 @@
     <string name="album_name_all">All Media</string>
 
     <string name="button_preview">Preview</string>
-    <string name="button_apply_default">Apply</string>
+    <string name="button_apply_default">Done</string>
     <string name="button_apply">Apply(%1$d)</string>
     <string name="button_back">Back</string>
     <string name="photo_grid_capture">Camera</string>
@@ -32,4 +32,8 @@
     <string name="error_file_type">Unsupported file type</string>
     <string name="error_type_conflict">Can\'t select images and videos at the same time</string>
     <string name="error_no_video_activity">No App found supporting video preview</string>
+    <plurals name="alert_title_unsupport_items" >
+        <item quantity="one">1 item in your selection is not supported, unselect to continue</item>
+        <item quantity="other">%d items in your selection are not supported, unselect to continue</item>
+    </plurals>
 </resources>
