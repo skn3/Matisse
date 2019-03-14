@@ -15,6 +15,9 @@
   limitations under the License.
   -->
 <resources>
+    <string name="capture" translatable="false">Capture</string>
+    <string name="photo" translatable="false">Photo</string>
+    <string name="video" translatable="false">Video</string>
     <string name="album_name_all">All Media</string>
 
     <string name="button_preview">Preview</string>

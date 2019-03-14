@@ -507,25 +507,28 @@ public class MatisseActivity extends AppCompatActivity implements
     @Override
     public void capture() {
         if (mMediaStoreCompat != null) {
-            String[] options = {"Image", "Video"};
+            if(mSpec.onlyShowImages()){
+                mMediaStoreCompat.dispatchCaptureIntent(MatisseActivity.this, MediaStore.ACTION_IMAGE_CAPTURE, REQUEST_CODE_CAPTURE_IMAGE);
+            } else {
+                String[] options = {getResources().getString(R.string.photo), getResources().getString(R.string.video)};
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Capture with");
-            builder.setItems(options, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // the user clicked on colors[which]
-                    switch(which) {
-                        case 0:
-                            mMediaStoreCompat.dispatchCaptureIntent(MatisseActivity.this, MediaStore.ACTION_IMAGE_CAPTURE, REQUEST_CODE_CAPTURE_IMAGE);
-                            break;
-                        case 1:
-                            mMediaStoreCompat.dispatchCaptureIntent(MatisseActivity.this, MediaStore.ACTION_VIDEO_CAPTURE, REQUEST_CODE_CAPTURE_VIDEO);
-                            break;
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(getResources().getString(R.string.capture));
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                mMediaStoreCompat.dispatchCaptureIntent(MatisseActivity.this, MediaStore.ACTION_IMAGE_CAPTURE, REQUEST_CODE_CAPTURE_IMAGE);
+                                break;
+                            case 1:
+                                mMediaStoreCompat.dispatchCaptureIntent(MatisseActivity.this, MediaStore.ACTION_VIDEO_CAPTURE, REQUEST_CODE_CAPTURE_VIDEO);
+                                break;
+                        }
                     }
-                }
-            });
-            builder.show();
+                });
+                builder.show();
+            }
 
         }
     }
