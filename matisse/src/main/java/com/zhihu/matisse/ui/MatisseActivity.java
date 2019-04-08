@@ -403,7 +403,7 @@ public class MatisseActivity extends AppCompatActivity implements
                 if (mimeType.contains("video")) {
                     //precheck
                     MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-                    mediaMetadataRetriever.setDataSource(this, Uri.parse(selectedPaths.get(i)));
+                    mediaMetadataRetriever.setDataSource(this, selectedUris.get(i));
                     long durationMs = 0;
                     String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
                     if (duration != null) {
