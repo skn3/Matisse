@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -27,7 +28,6 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
@@ -36,6 +36,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.media.ExifInterface;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -345,6 +346,12 @@ public class MatisseActivity extends AppCompatActivity implements
         }
     }
 
+    protected String getMimeType(Context context, Uri uri){
+        ContentResolver cR = context.getContentResolver();
+        String crType = cR.getType(uri);
+        return crType;
+    }
+
     protected String getMimeType(String path) {
         int i = path.lastIndexOf('.');
         String extension = "";
@@ -392,7 +399,7 @@ public class MatisseActivity extends AppCompatActivity implements
             int brokenItems = 0;
             for (int i = 0 ; i < selectedUris.size() ; i++){
 
-                String mimeType = getMimeType(selectedPaths.get(i).toLowerCase());
+                String mimeType = getMimeType(MatisseActivity.this, selectedUris.get(i));
                 if (mimeType.contains("video")) {
                     //precheck
                     MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
