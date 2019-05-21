@@ -34,6 +34,6 @@
     <string name="error_no_video_activity">Keine App zur Videovorschau gefunden</string>
     <plurals name="alert_title_unsupport_items" >
         <item quantity="one">1 ausgewähltes Element wird nicht unterstützt. Deaktivieren Sie, um fortzufahren</item>
-        <item quantity="other">d% ausgewählte Elemente werden nicht unterstützt. Deaktivieren Sie, um fortzufahren</item>
+        <item quantity="other">%1$d ausgewählte Elemente werden nicht unterstützt. Deaktivieren Sie, um fortzufahren</item>
     </plurals>
 </resources>

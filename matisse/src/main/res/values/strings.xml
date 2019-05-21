@@ -39,6 +39,6 @@
     <string name="error_no_video_activity">No App found supporting video preview</string>
     <plurals name="alert_title_unsupport_items" >
         <item quantity="one">1 selected item is not supported, deseletect to continue</item>
-        <item quantity="other">%d selected items are not supported, deseletect to continue</item>
+        <item quantity="other">%1$d selected items are not supported, deseletect to continue</item>
     </plurals>
 </resources>
