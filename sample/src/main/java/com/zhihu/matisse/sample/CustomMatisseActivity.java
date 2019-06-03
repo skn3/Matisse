@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -22,8 +21,6 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
-import com.zhihu.matisse.internal.entity.Item;
-import com.zhihu.matisse.internal.entity.SelectionSpec;
 import com.zhihu.matisse.internal.model.SelectedItemCollection;
 import com.zhihu.matisse.listener.SelectionDelegate;
 
@@ -147,12 +144,6 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
                 .delegate(this)
                 .forResult(REQUEST_CODE_CHOOSE, mSelectedUris);
 
-    }
-
-    @Override
-    public boolean shouldSelectAsset(SelectedItemCollection collection, SelectionSpec spec, Item item) {
-        Log.d(TAG, "shouldSelectAsset item: "+collection.getItems().size()+" spec :" + spec.toString() +" item : "+item.toString());
-        return false;
     }
 
     @Override

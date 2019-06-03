@@ -1,7 +1,5 @@
 package com.zhihu.matisse.listener;
 
-import com.zhihu.matisse.internal.entity.Item;
-import com.zhihu.matisse.internal.entity.SelectionSpec;
 import com.zhihu.matisse.internal.model.SelectedItemCollection;
 
 /**
@@ -15,7 +13,5 @@ import com.zhihu.matisse.internal.model.SelectedItemCollection;
  * Created by jameskong on 2019-06-03.
  */
 public interface SelectionDelegate {
-	boolean shouldSelectAsset(SelectedItemCollection collection, SelectionSpec spec, Item item);
-
 	String getCause(SelectedItemCollection.MaxItemReach reach);
 }
