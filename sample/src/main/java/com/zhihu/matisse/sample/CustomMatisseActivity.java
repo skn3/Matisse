@@ -21,6 +21,8 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
+import com.zhihu.matisse.internal.model.SelectedItemCollection;
+import com.zhihu.matisse.listener.SelectionDelegate;
 
 import java.util.List;
 import java.util.Set;
@@ -28,9 +30,10 @@ import java.util.Set;
 /**
  * Custom Matisse
  */
-public class CustomMatisseActivity extends AppCompatActivity implements View.OnClickListener {
+public class CustomMatisseActivity extends AppCompatActivity implements View.OnClickListener, SelectionDelegate {
 
     private static final int REQUEST_CODE_CHOOSE = 23;
+    private static final String TAG = CustomMatisseActivity.class.getSimpleName();
 
     private List<Uri> mSelectedUris;
 
@@ -138,6 +141,24 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
                 .thumbnailScale(0.85f)
                 .imageEngine(imageEngine)
                 .theme(theme)
+                .delegate(this)
                 .forResult(REQUEST_CODE_CHOOSE, mSelectedUris);
+
+    }
+
+    @Override
+    public String getCause(SelectedItemCollection.MaxItemReach reach) {
+
+        switch (reach) {
+            case MIX_REACH:
+                return "Mix cause";
+            case IMAGE_REACH:
+                return "Image cause";
+            case VIDEO_REACH:
+                return "Video cause";
+            default:
+                return "My cause";
+        }
+
     }
 }

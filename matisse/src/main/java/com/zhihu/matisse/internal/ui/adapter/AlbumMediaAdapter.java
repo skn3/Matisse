@@ -129,12 +129,12 @@ public class AlbumMediaAdapter extends
         if (mSelectionSpec.countable) {
             int checkedNum = mSelectedCollection.checkedNumOf(item);
             if (checkedNum > 0) {
-                if (!mSelectedCollection.maxSelectableReached(item)) {
+                if (mSelectedCollection.maxSelectableReached(item) == SelectedItemCollection.MaxItemReach.NOT_REACH) {
                     mediaGrid.setCheckEnabled(true);
                 }
                 mediaGrid.setCheckedNum(checkedNum);
             } else {
-                if (mSelectedCollection.maxSelectableReached(item)) {
+                if (mSelectedCollection.maxSelectableReached(item) != SelectedItemCollection.MaxItemReach.NOT_REACH) {
 //                    mediaGrid.setCheckEnabled(false);
                     mediaGrid.setCheckedNum(CheckView.UNCHECKED);
                 } else {
@@ -145,12 +145,12 @@ public class AlbumMediaAdapter extends
         } else {
             boolean selected = mSelectedCollection.isSelected(item);
             if (selected) {
-                if (!mSelectedCollection.maxSelectableReached(item)) {
+                if (mSelectedCollection.maxSelectableReached(item) == SelectedItemCollection.MaxItemReach.NOT_REACH) {
                     mediaGrid.setCheckEnabled(true);
                 }
                 mediaGrid.setChecked(true);
             } else {
-                if (mSelectedCollection.maxSelectableReached(item)) {
+                if (mSelectedCollection.maxSelectableReached(item) != SelectedItemCollection.MaxItemReach.NOT_REACH) {
 //                    mediaGrid.setCheckEnabled(false);
                     mediaGrid.setChecked(false);
                 } else {

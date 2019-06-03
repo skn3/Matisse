@@ -37,6 +37,7 @@ import com.zhihu.matisse.internal.loader.AlbumMediaLoader;
 import com.zhihu.matisse.internal.model.SelectedItemCollection;
 import com.zhihu.matisse.listener.OnCheckedListener;
 import com.zhihu.matisse.listener.OnSelectedListener;
+import com.zhihu.matisse.listener.SelectionDelegate;
 import com.zhihu.matisse.ui.MatisseActivity;
 
 import java.lang.annotation.Retention;
@@ -389,6 +390,16 @@ public final class SelectionCreator {
 
     public void forResult(int requestCode) {
         forResult(requestCode, null);
+    }
+
+    /**
+     * when selection event emit register can observe
+     * @param delegate
+     * @return
+     */
+    public SelectionCreator delegate(SelectionDelegate delegate) {
+        mSelectionSpec.delegate = delegate;
+        return this;
     }
 
 }
