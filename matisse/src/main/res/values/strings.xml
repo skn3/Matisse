@@ -27,10 +27,19 @@
     <string name="photo_grid_capture">Camera</string>
     <string name="empty_text">No media yet</string>
     <string name="button_ok">OK</string>
-
     <string name="error_over_count_default">You have reached max selectable</string>
+
     <plurals name="error_over_count" >
+        <item quantity="one">You can only select up to 1 media file</item>
         <item quantity="other">You can only select up to %1$d media files</item>
+    </plurals>
+    <plurals name="error_image_over_count" >
+        <item quantity="one">You can only select up to 1 image file</item>
+        <item quantity="other">You can only select up to %1$d image files</item>
+    </plurals>
+    <plurals name="error_video_over_count" >
+        <item quantity="one">You can only select up to 1 video file</item>
+        <item quantity="other">You can only select up to %1$d video files</item>
     </plurals>
     <string name="error_under_quality">Under quality</string>
     <string name="error_over_quality">Over quality</string>

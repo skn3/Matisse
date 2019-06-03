@@ -26,6 +26,7 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.listener.OnCheckedListener;
 import com.zhihu.matisse.listener.OnSelectedListener;
+import com.zhihu.matisse.listener.SelectionDelegate;
 
 import java.util.List;
 import java.util.Set;
@@ -58,7 +59,17 @@ public final class SelectionSpec {
     public boolean enablePreview;
     public boolean showUseOrigin;
 
-    private SelectionSpec() {
+    public SelectionDelegate getDelegate() {
+        return delegate;
+    }
+
+    public void setDelegate(SelectionDelegate delegate) {
+        this.delegate = delegate;
+    }
+
+    public SelectionDelegate delegate;
+
+	private SelectionSpec() {
     }
 
     public static SelectionSpec getInstance() {
