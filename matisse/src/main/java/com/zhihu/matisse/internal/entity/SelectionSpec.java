@@ -26,6 +26,7 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.listener.OnCheckedListener;
 import com.zhihu.matisse.listener.OnSelectedListener;
+import com.zhihu.matisse.listener.SelectionDelegate;
 
 import java.util.List;
 import java.util.Set;
@@ -52,11 +53,23 @@ public final class SelectionSpec {
     public boolean hasInited;
     public OnSelectedListener onSelectedListener;
     public boolean originalable;
-    public boolean previewable;
+    public boolean autoHideToobar;
     public int originalMaxSize;
     public OnCheckedListener onCheckedListener;
+    public boolean enablePreview;
+    public boolean showUseOrigin;
 
-    private SelectionSpec() {
+    public SelectionDelegate getDelegate() {
+        return delegate;
+    }
+
+    public void setDelegate(SelectionDelegate delegate) {
+        this.delegate = delegate;
+    }
+
+    public SelectionDelegate delegate;
+
+	private SelectionSpec() {
     }
 
     public static SelectionSpec getInstance() {
@@ -88,8 +101,9 @@ public final class SelectionSpec {
         imageEngine = new GlideEngine();
         hasInited = true;
         originalable = false;
-        previewable = false;
+        autoHideToobar = false;
         originalMaxSize = Integer.MAX_VALUE;
+        enablePreview = false;
     }
 
     public boolean singleSelectionModeEnabled() {

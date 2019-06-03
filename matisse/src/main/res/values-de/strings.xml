@@ -12,6 +12,9 @@
   limitations under the License.
   -->
 <resources>
+    <string name="capture">Erfassung</string>
+    <string name="photo">Foto</string>
+    <string name="video">Video</string>
     <string name="album_name_all">Alle Medien</string>
 
     <string name="button_preview">Vorschau</string>
@@ -23,10 +26,25 @@
     <string name="button_ok">OK</string>
 
     <string name="error_over_count_default">Sie haben die maximale Anzahl an Medien ausgewählt.</string>
-    <string name="error_over_count">Sie können nur %1$d Medien auswählen</string>
+	<plurals name="error_over_count" >
+        <item quantity="one">Sie können nur 1 Medien auswählen</item>
+        <item quantity="other">Sie können nur %1$d Medien auswählen</item>
+    </plurals>
+    <plurals name="error_image_over_count" >
+        <item quantity="one">Sie können nur 1 Bild auswählen</item>
+        <item quantity="other">Sie können nur %1$d Bild auswählen</item>
+    </plurals>
+    <plurals name="error_video_over_count" >
+        <item quantity="one">Sie können nur 1 Video auswählen</item>
+        <item quantity="other">Sie können nur %1$d Video auswählen</item>
+    </plurals>
     <string name="error_under_quality">Unter Qualität</string>
     <string name="error_over_quality">Über Qualität</string>
     <string name="error_file_type">Dateityp nicht unterstützt</string>
     <string name="error_type_conflict">Sie können Bilder und Videos nicht gleichzeitig auswählen</string>
     <string name="error_no_video_activity">Keine App zur Videovorschau gefunden</string>
+    <plurals name="alert_title_unsupport_items" >
+        <item quantity="one">1 ausgewähltes Element wird nicht unterstützt. Deaktivieren Sie, um fortzufahren</item>
+        <item quantity="other">%1$d ausgewählte Elemente werden nicht unterstützt. Deaktivieren Sie, um fortzufahren</item>
+    </plurals>
 </resources>

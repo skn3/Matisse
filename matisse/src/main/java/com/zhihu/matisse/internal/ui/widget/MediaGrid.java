@@ -22,6 +22,7 @@ import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,7 +36,7 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
     private CheckView mCheckView;
     private ImageView mGifTag;
     private TextView mVideoDuration;
-
+    private FrameLayout mVideoInfoLayout;
     private Item mMedia;
     private PreBindInfo mPreBindInfo;
     private OnMediaGridClickListener mListener;
@@ -57,6 +58,7 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
         mThumbnail = (ImageView) findViewById(R.id.media_thumbnail);
         mCheckView = (CheckView) findViewById(R.id.check_view);
         mGifTag = (ImageView) findViewById(R.id.gif);
+        mVideoInfoLayout = findViewById(R.id.video_info);
         mVideoDuration = (TextView) findViewById(R.id.video_duration);
         mVideoIcon = (ImageView) findViewById(R.id.video_icon);
 
@@ -67,9 +69,9 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (mListener != null) {
-            if (v == mThumbnail && SelectionSpec.getInstance().previewable) {
+            if (v == mThumbnail && SelectionSpec.getInstance().enablePreview) {
                 mListener.onThumbnailClicked(mThumbnail, mMedia, mPreBindInfo.mViewHolder);
-            } else if (v == mCheckView || (v == mThumbnail && !SelectionSpec.getInstance().previewable)) {
+            } else if (v == mCheckView || (v == mThumbnail && !SelectionSpec.getInstance().enablePreview)) {
                 mListener.onCheckViewClicked(mCheckView, mMedia, mPreBindInfo.mViewHolder);
             }
         }
@@ -123,12 +125,10 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
 
     private void setVideoDuration() {
         if (mMedia.isVideo()) {
-            mVideoDuration.setVisibility(VISIBLE);
-            mVideoIcon.setVisibility(VISIBLE);
+            mVideoInfoLayout.setVisibility(VISIBLE);
             mVideoDuration.setText(DateUtils.formatElapsedTime(mMedia.duration / 1000));
         } else {
-            mVideoDuration.setVisibility(GONE);
-            mVideoIcon.setVisibility(GONE);
+            mVideoInfoLayout.setVisibility(GONE);
         }
     }
 

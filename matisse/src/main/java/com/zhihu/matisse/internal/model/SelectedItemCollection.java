@@ -38,6 +38,12 @@ public class SelectedItemCollection {
 
     public static final String STATE_SELECTION = "state_selection";
     public static final String STATE_COLLECTION_TYPE = "state_collection_type";
+    public enum MaxItemReach{
+        NOT_REACH,
+        IMAGE_REACH,
+        VIDEO_REACH,
+        MIX_REACH,
+    };
     /**
      * Empty collection
      */
@@ -55,6 +61,11 @@ public class SelectedItemCollection {
      */
     public static final int COLLECTION_MIXED = COLLECTION_IMAGE | COLLECTION_VIDEO;
     private final Context mContext;
+
+    public Set<Item> getItems() {
+        return mItems;
+    }
+
     private Set<Item> mItems;
     private int mCollectionType = COLLECTION_UNDEFINED;
 
@@ -69,6 +80,7 @@ public class SelectedItemCollection {
             List<Item> saved = bundle.getParcelableArrayList(STATE_SELECTION);
             mItems = new LinkedHashSet<>(saved);
             mCollectionType = bundle.getInt(STATE_COLLECTION_TYPE, COLLECTION_UNDEFINED);
+            refineCollectionType();
         }
     }
 
@@ -167,22 +179,47 @@ public class SelectedItemCollection {
     }
 
     public IncapableCause isAcceptable(Item item) {
-        if (maxSelectableReached()) {
+        MaxItemReach reach = maxSelectableReached(item);
+        if (reach != MaxItemReach.NOT_REACH) {
             int maxSelectable = currentMaxSelectable();
             String cause;
-
+            SelectionSpec spec = SelectionSpec.getInstance();
             try {
-                cause = mContext.getResources().getQuantityString(
-                        R.plurals.error_over_count,
-                        maxSelectable,
-                        maxSelectable
-                );
+                if(spec.delegate != null) {
+                    cause = spec.delegate.getCause(reach);
+                } else {
+                    switch (reach) {
+                        case MIX_REACH:
+                            cause = mContext.getResources().getQuantityString(
+                                    R.plurals.error_over_count,
+                                    maxSelectable,
+                                    maxSelectable
+                            );
+                            break;
+                        case IMAGE_REACH:
+                            cause = mContext.getResources().getQuantityString(
+                                    R.plurals.error_image_over_count,
+                                    spec.maxImageSelectable,
+                                    spec.maxImageSelectable
+                            );
+                            break;
+                        case VIDEO_REACH:
+                            cause = mContext.getResources().getQuantityString(
+                                    R.plurals.error_video_over_count,
+                                    spec.maxVideoSelectable,
+                                    spec.maxVideoSelectable
+                            );
+                            break;
+                        default:
+                            cause = mContext.getResources().getQuantityString(
+                                    R.plurals.error_over_count,
+                                    maxSelectable,
+                                    maxSelectable
+                            );
+                            break;
+                    }
+                }
             } catch (Resources.NotFoundException e) {
-                cause = mContext.getString(
-                        R.string.error_over_count,
-                        maxSelectable
-                );
-            } catch (NoClassDefFoundError e) {
                 cause = mContext.getString(
                         R.string.error_over_count,
                         maxSelectable
@@ -197,22 +234,73 @@ public class SelectedItemCollection {
         return PhotoMetadataUtils.isAcceptable(mContext, item);
     }
 
-    public boolean maxSelectableReached() {
-        return mItems.size() == currentMaxSelectable();
+    public MaxItemReach maxSelectableReached(Item item) {
+        SelectionSpec spec = SelectionSpec.getInstance();
+        if (mCollectionType == COLLECTION_MIXED || (spec.maxVideoSelectable > 0 && spec.maxImageSelectable > 0)){
+            int nVideo = selectedVideos();
+            int nImage = selectedImages();
+
+            if(nVideo == spec.maxVideoSelectable && item.isVideo()){
+                return MaxItemReach.VIDEO_REACH;
+            } else if(nImage == spec.maxImageSelectable && (item.isImage())){
+                return MaxItemReach.IMAGE_REACH;
+            } else if((nImage+nVideo) == spec.maxImageSelectable && (item.isImage() || item.isVideo())){
+                return MaxItemReach.MIX_REACH;
+            }
+        } else {
+            return (mItems.size() == currentMaxSelectable()) ? MaxItemReach.MIX_REACH : MaxItemReach.NOT_REACH;
+        }
+        return MaxItemReach.NOT_REACH;
     }
 
     // depends
     private int currentMaxSelectable() {
         SelectionSpec spec = SelectionSpec.getInstance();
-        if (spec.maxSelectable > 0) {
+        if (mCollectionType == COLLECTION_MIXED || (spec.maxVideoSelectable > 0 && spec.maxImageSelectable > 0)) {
+            return mixMediaCount();
+        } else if (spec.maxSelectable > 0) {
             return spec.maxSelectable;
-        } else if (mCollectionType == COLLECTION_IMAGE) {
+        }else if (mCollectionType == COLLECTION_IMAGE) {
             return spec.maxImageSelectable;
         } else if (mCollectionType == COLLECTION_VIDEO) {
             return spec.maxVideoSelectable;
+        } else if (mCollectionType == COLLECTION_MIXED) {
+            return mixMediaCount();
         } else {
             return spec.maxSelectable;
         }
+    }
+
+    private int mixMediaCount() {
+        SelectionSpec spec = SelectionSpec.getInstance();
+        int nVideo = selectedImages();
+        int nImage = selectedVideos();
+
+        if((nImage+nVideo) == spec.maxImageSelectable){
+            return (nImage+nVideo);
+        } else if(nImage == spec.maxImageSelectable){
+            return nImage;
+        } if(nVideo == spec.maxVideoSelectable){
+            return nVideo;
+        } else {
+            return spec.maxImageSelectable;
+        }
+    }
+
+    private int selectedImages(){
+        int nImage = 0;
+        for (Item i : mItems) {
+            if (i.isImage()) nImage++;
+        }
+        return nImage;
+    }
+
+    private int selectedVideos(){
+        int nVideo = 0;
+        for (Item i : mItems) {
+            if (i.isVideo()) nVideo++;
+        }
+        return nVideo;
     }
 
     public int getCollectionType() {

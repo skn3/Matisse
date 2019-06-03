@@ -129,11 +129,13 @@ public class AlbumMediaAdapter extends
         if (mSelectionSpec.countable) {
             int checkedNum = mSelectedCollection.checkedNumOf(item);
             if (checkedNum > 0) {
-                mediaGrid.setCheckEnabled(true);
+                if (mSelectedCollection.maxSelectableReached(item) == SelectedItemCollection.MaxItemReach.NOT_REACH) {
+                    mediaGrid.setCheckEnabled(true);
+                }
                 mediaGrid.setCheckedNum(checkedNum);
             } else {
-                if (mSelectedCollection.maxSelectableReached()) {
-                    mediaGrid.setCheckEnabled(false);
+                if (mSelectedCollection.maxSelectableReached(item) != SelectedItemCollection.MaxItemReach.NOT_REACH) {
+//                    mediaGrid.setCheckEnabled(false);
                     mediaGrid.setCheckedNum(CheckView.UNCHECKED);
                 } else {
                     mediaGrid.setCheckEnabled(true);
@@ -143,11 +145,13 @@ public class AlbumMediaAdapter extends
         } else {
             boolean selected = mSelectedCollection.isSelected(item);
             if (selected) {
-                mediaGrid.setCheckEnabled(true);
+                if (mSelectedCollection.maxSelectableReached(item) == SelectedItemCollection.MaxItemReach.NOT_REACH) {
+                    mediaGrid.setCheckEnabled(true);
+                }
                 mediaGrid.setChecked(true);
             } else {
-                if (mSelectedCollection.maxSelectableReached()) {
-                    mediaGrid.setCheckEnabled(false);
+                if (mSelectedCollection.maxSelectableReached(item) != SelectedItemCollection.MaxItemReach.NOT_REACH) {
+//                    mediaGrid.setCheckEnabled(false);
                     mediaGrid.setChecked(false);
                 } else {
                     mediaGrid.setCheckEnabled(true);
@@ -207,7 +211,6 @@ public class AlbumMediaAdapter extends
         IncapableCause.handleCause(context, cause);
         return cause == null;
     }
-
 
     public void registerCheckStateListener(CheckStateListener listener) {
         mCheckStateListener = listener;

@@ -21,6 +21,8 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
+import com.zhihu.matisse.internal.model.SelectedItemCollection;
+import com.zhihu.matisse.listener.SelectionDelegate;
 
 import java.util.List;
 import java.util.Set;
@@ -28,9 +30,10 @@ import java.util.Set;
 /**
  * Custom Matisse
  */
-public class CustomMatisseActivity extends AppCompatActivity implements View.OnClickListener {
+public class CustomMatisseActivity extends AppCompatActivity implements View.OnClickListener, SelectionDelegate {
 
     private static final int REQUEST_CODE_CHOOSE = 23;
+    private static final String TAG = CustomMatisseActivity.class.getSimpleName();
 
     private List<Uri> mSelectedUris;
 
@@ -77,6 +80,8 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
         RadioButton picassoRadioButton = (RadioButton) findViewById(R.id.rb_picasso);
         RadioButton uilRadioButton = (RadioButton) findViewById(R.id.rb_uil);
         EditText selectCountEditor = (EditText) findViewById(R.id.et_selectable_count);
+        EditText selectVideoCountEditor = (EditText) findViewById(R.id.et_video_selectable_count);
+
         CheckBox countableCheckBox = (CheckBox) findViewById(R.id.cb_countable);
         CheckBox captureCheckBox = (CheckBox) findViewById(R.id.cb_capture);
 
@@ -100,7 +105,9 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
         }
 
         String maxCount = selectCountEditor.getText().toString();
+        String maxVideoCount = selectVideoCountEditor.getText().toString();
         int maxSelectable = Integer.parseInt(maxCount);
+        int maxVideoSeletable = Integer.parseInt(maxVideoCount);
 
         int theme = R.style.Matisse_Dracula;
         if (zhihuRadioButton.isChecked()) {
@@ -123,14 +130,35 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
                 .captureStrategy(
                         new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
                 .countable(countable)
-                .maxSelectable(maxSelectable)
+//                .maxSelectable(maxSelectable)
+                .enablePreview(false)
+                .maxSelectablePerMediaType(maxSelectable, maxVideoSeletable)
                 .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                 .gridExpectedSize(
                         getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+
                 .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                 .thumbnailScale(0.85f)
                 .imageEngine(imageEngine)
                 .theme(theme)
+                .delegate(this)
                 .forResult(REQUEST_CODE_CHOOSE, mSelectedUris);
+
+    }
+
+    @Override
+    public String getCause(SelectedItemCollection.MaxItemReach reach) {
+
+        switch (reach) {
+            case MIX_REACH:
+                return "Mix cause";
+            case IMAGE_REACH:
+                return "Image cause";
+            case VIDEO_REACH:
+                return "Video cause";
+            default:
+                return "My cause";
+        }
+
     }
 }
