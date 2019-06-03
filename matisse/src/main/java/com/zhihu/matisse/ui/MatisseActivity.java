@@ -19,6 +19,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -26,7 +28,6 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
@@ -35,6 +36,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.media.ExifInterface;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -80,6 +82,9 @@ public class MatisseActivity extends AppCompatActivity implements
     public static final String EXTRA_RESULT_SELECTION_PATH = "extra_result_selection_path";
     private static final int REQUEST_CODE_PREVIEW = 23;
     private static final int REQUEST_CODE_CAPTURE = 24;
+    private static final int REQUEST_CODE_CAPTURE_IMAGE = 25;
+    private static final int REQUEST_CODE_CAPTURE_VIDEO = 26;
+    private final String TAG = MatisseActivity.this.getClass().getSimpleName();
     private final AlbumCollection mAlbumCollection = new AlbumCollection();
     private MediaStoreCompat mMediaStoreCompat;
     private SelectedItemCollection mSelectedCollection = new SelectedItemCollection(this);
@@ -118,15 +123,19 @@ public class MatisseActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         Drawable navigationIcon = toolbar.getNavigationIcon();
         TypedArray ta = getTheme().obtainStyledAttributes(new int[]{R.attr.album_element_color});
         int color = ta.getColor(0, 0);
         ta.recycle();
-        navigationIcon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-
-        mButtonPreview = (TextView) findViewById(R.id.button_preview);
+        if(navigationIcon != null) {
+            navigationIcon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        }
+        mButtonPreview = findViewById(R.id.button_preview);
         if(SelectionSpec.getInstance().enablePreview) {
             mButtonPreview.setVisibility(View.VISIBLE);
         } else {
@@ -219,9 +228,12 @@ public class MatisseActivity extends AppCompatActivity implements
                 }
                 updateBottomToolbar();
             }
-        } else if (requestCode == REQUEST_CODE_CAPTURE) {
+        } else if (requestCode == REQUEST_CODE_CAPTURE || requestCode == REQUEST_CODE_CAPTURE_IMAGE || requestCode == REQUEST_CODE_CAPTURE_VIDEO) {
             // Just pass the data back to previous calling Activity.
-            Uri contentUri = addImageToGallery(this.getContentResolver(), new File(mMediaStoreCompat.getCurrentPhotoPath()));
+            Uri contentUri = addMediaToGallery(this.getContentResolver(), new File(mMediaStoreCompat.getCurrentPhotoPath()));
+            if(contentUri == null){
+                return;
+            }
             this.getContentResolver().notifyChange(contentUri, this.mObserver);
             String path = mMediaStoreCompat.getCurrentPhotoPath();
 
@@ -255,8 +267,17 @@ public class MatisseActivity extends AppCompatActivity implements
 
         }
     }
+    public Uri addMediaToGallery(ContentResolver cr, File filepath) {
+        String type = getMimeType(filepath.getAbsolutePath());
+        if(type.contains("image")){
+            return addImageToGallery(cr, filepath, type);
+        }else if(type.contains("video")){
+            return addVideoToGallery(cr, filepath, type);
+        }
+        return null;
+    }
 
-    public Uri addImageToGallery(ContentResolver cr, File filepath){
+    public Uri addImageToGallery(ContentResolver cr, File filepath, String type){
         ExifInterface exifInterface = null;
         try {
             exifInterface = new ExifInterface(filepath.getAbsolutePath());
@@ -267,7 +288,8 @@ public class MatisseActivity extends AppCompatActivity implements
         values.put(MediaStore.Images.Media.TITLE, filepath.getName());
         values.put(MediaStore.Images.Media.DISPLAY_NAME, filepath.getName());
         values.put(MediaStore.Images.Media.DESCRIPTION, "");
-        values.put(MediaStore.Images.Media.MIME_TYPE, getMimeType(filepath.getAbsolutePath()));
+
+        values.put(MediaStore.Images.Media.MIME_TYPE, type);
         values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
         values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
         values.put(MediaStore.Images.Media.DATA, filepath.toString());
@@ -276,8 +298,35 @@ public class MatisseActivity extends AppCompatActivity implements
             values.put(MediaStore.Images.Media.LATITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
             values.put(MediaStore.Images.Media.LONGITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
         }
-
         return cr.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    }
+
+    public Uri addVideoToGallery(ContentResolver cr, File filepath, String type){
+        ExifInterface exifInterface = null;
+        try {
+            exifInterface = new ExifInterface(filepath.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Video.Media.TITLE, filepath.getName());
+        values.put(MediaStore.Video.Media.DISPLAY_NAME, filepath.getName());
+        values.put(MediaStore.Video.Media.DESCRIPTION, "");
+        values.put(MediaStore.Video.Media.MIME_TYPE, type);
+        values.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis());
+        values.put(MediaStore.Video.Media.DATE_TAKEN, System.currentTimeMillis());
+        values.put(MediaStore.Video.Media.DATA, filepath.toString());
+        if(exifInterface != null) {
+            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+            mediaMetadataRetriever.setDataSource(this, Uri.parse(filepath.getAbsolutePath()));
+
+            String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            values.put(MediaStore.Video.Media.DURATION, duration);
+            values.put(MediaStore.Video.Media.LATITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+            values.put(MediaStore.Video.Media.LONGITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+        }
+
+        return cr.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
     }
 
     /**
@@ -297,13 +346,26 @@ public class MatisseActivity extends AppCompatActivity implements
         }
     }
 
+    protected String getMimeType(Context context, Uri uri){
+        ContentResolver cR = context.getContentResolver();
+        String crType = cR.getType(uri);
+        return crType;
+    }
+
     protected String getMimeType(String path) {
-        String type = null;
-        String extension = MimeTypeMap.getFileExtensionFromUrl(path);
-        if (extension != null) {
-            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        int i = path.lastIndexOf('.');
+        String extension = "";
+        if (i > 0) {
+            extension = "file."+path.substring(i+1);
         }
-        return type;
+
+        String type = "";
+        String ext = MimeTypeMap.getFileExtensionFromUrl(extension);
+        if (ext != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+        }
+
+        return (type == null) ? "" : type;
     }
 
     private void updateBottomToolbar() {
@@ -337,11 +399,11 @@ public class MatisseActivity extends AppCompatActivity implements
             int brokenItems = 0;
             for (int i = 0 ; i < selectedUris.size() ; i++){
 
-                String mimeType = getMimeType(selectedPaths.get(i).toLowerCase());
+                String mimeType = getMimeType(MatisseActivity.this, selectedUris.get(i));
                 if (mimeType.contains("video")) {
                     //precheck
                     MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-                    mediaMetadataRetriever.setDataSource(this, Uri.parse(selectedPaths.get(i)));
+                    mediaMetadataRetriever.setDataSource(this, selectedUris.get(i));
                     long durationMs = 0;
                     String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
                     if (duration != null) {
@@ -452,7 +514,29 @@ public class MatisseActivity extends AppCompatActivity implements
     @Override
     public void capture() {
         if (mMediaStoreCompat != null) {
-            mMediaStoreCompat.dispatchCaptureIntent(this, REQUEST_CODE_CAPTURE);
+            if(mSpec.onlyShowImages()){
+                mMediaStoreCompat.dispatchCaptureIntent(MatisseActivity.this, MediaStore.ACTION_IMAGE_CAPTURE, REQUEST_CODE_CAPTURE_IMAGE);
+            } else {
+                String[] options = {getResources().getString(R.string.photo), getResources().getString(R.string.video)};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(getResources().getString(R.string.capture));
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                mMediaStoreCompat.dispatchCaptureIntent(MatisseActivity.this, MediaStore.ACTION_IMAGE_CAPTURE, REQUEST_CODE_CAPTURE_IMAGE);
+                                break;
+                            case 1:
+                                mMediaStoreCompat.dispatchCaptureIntent(MatisseActivity.this, MediaStore.ACTION_VIDEO_CAPTURE, REQUEST_CODE_CAPTURE_VIDEO);
+                                break;
+                        }
+                    }
+                });
+                builder.show();
+            }
+
         }
     }
 }
