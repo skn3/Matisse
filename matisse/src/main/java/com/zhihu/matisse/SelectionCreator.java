@@ -367,8 +367,8 @@ public final class SelectionCreator {
     /**
      * Use case for avatar or any single selection of photo or video
      */
-    public SelectionCreator enableSingleSelection(boolean b) {
-        mSelectionSpec.enableSingleSelection = b;
+    public SelectionCreator allowsMultipleSelection(boolean b) {
+        mSelectionSpec.allowsMultipleSelection = b;
         return this;
     }
 

@@ -142,7 +142,7 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
                 .imageEngine(imageEngine)
                 .theme(theme)
                 .delegate(this)
-                .enableSingleSelection(false)
+                .allowsMultipleSelection(true)
                 .forResult(REQUEST_CODE_CHOOSE, mSelectedUris);
 
     }
