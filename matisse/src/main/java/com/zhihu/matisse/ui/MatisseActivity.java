@@ -378,7 +378,7 @@ public class MatisseActivity extends AppCompatActivity implements
             mButtonPreview.setEnabled(true);
             mButtonApply.setText(R.string.button_apply_default);
             mButtonApply.setEnabled(true);
-            if(mSpec.enableSingleSelection) {
+            if(!mSpec.enableSingleSelection) {
                 this.onFinishSelection();
             }
         } else {
