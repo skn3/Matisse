@@ -44,6 +44,14 @@ public enum MimeType {
             "jpg",
             "jpeg"
     )),
+    HEIF("image/heif", arraySetOf(
+            "heif",
+            "heif"
+    )),
+    HEIC("image/heif", arraySetOf(
+            "heic",
+            "heic"
+    )),
     PNG("image/png", arraySetOf(
             "png"
     )),
@@ -107,7 +115,7 @@ public enum MimeType {
     }
 
     public static Set<MimeType> ofImage() {
-        return EnumSet.of(JPEG, PNG, GIF, BMP, WEBP);
+        return EnumSet.of(JPEG, PNG, GIF, BMP, WEBP, HEIC, HEIF);
     }
 
     public static Set<MimeType> ofVideo() {
