@@ -15,39 +15,39 @@
   limitations under the License.
   -->
 <resources>
-    <string name="capture" translatable="false">プレースホルダー</string>
-    <string name="photo" translatable="false">プレースホルダー</string>
-    <string name="video" translatable="false">プレースホルダー</string>
-    <string name="album_name_all">プレースホルダー</string>
+    <string name="capture" translatable="false">キャプチャ</string>
+    <string name="photo" translatable="false">Photo</string>
+    <string name="video" translatable="false">動画</string>
+    <string name="album_name_all">すべてのメディア</string>
 
-    <string name="button_preview">プレースホルダー</string>
-    <string name="button_apply_default">プレースホルダー</string>
-    <string name="button_apply">プレースホルダー</string>
-    <string name="button_back">プレースホルダー</string>
-    <string name="photo_grid_capture">プレースホルダー</string>
-    <string name="empty_text">プレースホルダー</string>
-    <string name="button_ok">プレースホルダー</string>
-    <string name="error_over_count_default">プレースホルダー</string>
+    <string name="button_preview">プレビュー</string>
+    <string name="button_apply_default">完了</string>
+    <string name="button_apply">完了（%1$d）</string>
+    <string name="button_back">戻る</string>
+    <string name="photo_grid_capture">カメラ</string>
+    <string name="empty_text">まだメディアがありません</string>
+    <string name="button_ok">OK</string>
+    <string name="error_over_count_default">選択できる上限に達しました</string>
 
     <plurals name="error_over_count" >
-        <item quantity="one">プレースホルダー</item>
-        <item quantity="other">プレースホルダー</item>
+        <item quantity="one">選択できるメディアファイルは最大1個までです。</item>
+        <item quantity="other">選択できるメディアファイルは最大%1$d個までです。</item>
     </plurals>
     <plurals name="error_image_over_count" >
-        <item quantity="one">プレースホルダー</item>
-        <item quantity="other">プレースホルダー</item>
+        <item quantity="one">選択できる画像ファイルは最大1個までです。</item>
+        <item quantity="other">選択できる画像ファイルは最大%1$d個までです。</item>
     </plurals>
     <plurals name="error_video_over_count" >
-        <item quantity="one">プレースホルダー</item>
-        <item quantity="other">プレースホルダー</item>
+        <item quantity="one">選択できる動画ファイルは最大1個までです。</item>
+        <item quantity="other">選択できる動画ファイルは最大%1$d個までです。</item>
     </plurals>
-    <string name="error_under_quality">プレースホルダー</string>
-    <string name="error_over_quality">プレースホルダー</string>
-    <string name="error_file_type">プレースホルダー</string>
-    <string name="error_type_conflict">プレースホルダー</string>
-    <string name="error_no_video_activity">プレースホルダー</string>
+    <string name="error_under_quality">低品質</string>
+    <string name="error_over_quality">過剰品質</string>
+    <string name="error_file_type">サポートされていないファイル</string>
+    <string name="error_type_conflict">一度に画像と動画を選択できません</string>
+    <string name="error_no_video_activity">アプリでサポートしている動画プレビューが見つかりません</string>
     <plurals name="alert_title_unsupport_items" >
-        <item quantity="one">プレースホルダー</item>
-        <item quantity="other">プレースホルダー</item>
+        <item quantity="one">1つの選択項目はサポートされてないので、選択を解除して進みます</item>
+        <item quantity="other">%1$dつの選択項目はサポートされてないので、選択を解除して進みます</item>
     </plurals>
 </resources>
