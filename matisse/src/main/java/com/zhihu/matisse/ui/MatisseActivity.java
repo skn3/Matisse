@@ -107,6 +107,13 @@ public class MatisseActivity extends AppCompatActivity implements
         setTheme(mSpec.themeId);
         super.onCreate(savedInstanceState);
 
+        if (!mSpec.hasInited) {
+            // When hasInited == false, indicate that MatisseActivity is restarting
+            // after app process was killed.
+            setResult(RESULT_CANCELED);
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_matisse);
 
         if (mSpec.needOrientationRestriction()) {
@@ -374,10 +381,13 @@ public class MatisseActivity extends AppCompatActivity implements
             mButtonPreview.setEnabled(false);
             mButtonApply.setEnabled(false);
             mButtonApply.setText(getString(R.string.button_apply_default));
-        } else if (selectedCount == 1 && mSpec.singleSelectionModeEnabled()) {
+        } else if (selectedCount == 1) {
             mButtonPreview.setEnabled(true);
             mButtonApply.setText(R.string.button_apply_default);
             mButtonApply.setEnabled(true);
+            if(!mSpec.allowsMultipleSelection) {
+                this.onFinishSelection();
+            }
         } else {
             mButtonPreview.setEnabled(true);
             mButtonApply.setEnabled(true);
@@ -392,44 +402,7 @@ public class MatisseActivity extends AppCompatActivity implements
             intent.putExtra(BasePreviewActivity.EXTRA_DEFAULT_BUNDLE, mSelectedCollection.getDataWithBundle());
             startActivityForResult(intent, REQUEST_CODE_PREVIEW);
         } else if (v.getId() == R.id.button_apply) {
-            Intent result = new Intent();
-            ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
-            ArrayList<String> selectedPaths = (ArrayList<String>) mSelectedCollection.asListOfString();
-
-            int brokenItems = 0;
-            for (int i = 0 ; i < selectedUris.size() ; i++){
-
-                String mimeType = getMimeType(MatisseActivity.this, selectedUris.get(i));
-                if (mimeType.contains("video")) {
-                    //precheck
-                    MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-                    mediaMetadataRetriever.setDataSource(this, selectedUris.get(i));
-                    long durationMs = 0;
-                    String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-                    if (duration != null) {
-                        durationMs = Long.parseLong(duration);
-                    }
-                    if (durationMs <= 0) {
-                        //prompt
-                        brokenItems++;
-                    }
-                }
-            }
-            if(brokenItems > 0) {
-
-                Resources res = getResources();
-                String alert_title = res.getQuantityString(R.plurals.alert_title_unsupport_items, brokenItems, brokenItems);
-                new AlertDialog.Builder(this)
-                        .setMessage(alert_title)
-                        .setPositiveButton(android.R.string.yes, null)
-                        .show();
-                return;
-            }
-
-            result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris);
-            result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths);
-            setResult(RESULT_OK, result);
-            finish();
+            this.onFinishSelection();
         }
     }
 
@@ -489,6 +462,48 @@ public class MatisseActivity extends AppCompatActivity implements
                     .replace(R.id.container, fragment, MediaSelectionFragment.class.getSimpleName())
                     .commitAllowingStateLoss();
         }
+    }
+
+    private void onFinishSelection() {
+        Intent result = new Intent();
+
+        ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
+        ArrayList<String> selectedPaths = (ArrayList<String>) mSelectedCollection.asListOfString();
+
+        int brokenItems = 0;
+        for (int i = 0 ; i < selectedUris.size() ; i++){
+
+            String mimeType = getMimeType(MatisseActivity.this, selectedUris.get(i));
+            if (mimeType.contains("video")) {
+                //precheck
+                MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+                mediaMetadataRetriever.setDataSource(this, selectedUris.get(i));
+                long durationMs = 0;
+                String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                if (duration != null) {
+                    durationMs = Long.parseLong(duration);
+                }
+                if (durationMs <= 0) {
+                    //prompt
+                    brokenItems++;
+                }
+            }
+        }
+        if(brokenItems > 0) {
+
+            Resources res = getResources();
+            String alert_title = res.getQuantityString(R.plurals.alert_title_unsupport_items, brokenItems, brokenItems);
+            new AlertDialog.Builder(this)
+                    .setMessage(alert_title)
+                    .setPositiveButton(android.R.string.yes, null)
+                    .show();
+            return;
+        }
+
+        result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris);
+        result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths);
+        setResult(RESULT_OK, result);
+        finish();
     }
 
     @Override

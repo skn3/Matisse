@@ -130,9 +130,9 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
                 .captureStrategy(
                         new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
                 .countable(countable)
-//                .maxSelectable(maxSelectable)
+                .maxSelectable(maxSelectable)
                 .enablePreview(false)
-                .maxSelectablePerMediaType(maxSelectable, maxVideoSeletable)
+//                .maxSelectablePerMediaType(maxSelectable, maxVideoSeletable)
                 .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                 .gridExpectedSize(
                         getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
@@ -142,6 +142,7 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
                 .imageEngine(imageEngine)
                 .theme(theme)
                 .delegate(this)
+                .allowsMultipleSelection(true)
                 .forResult(REQUEST_CODE_CHOOSE, mSelectedUris);
 
     }

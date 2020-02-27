@@ -365,6 +365,14 @@ public final class SelectionCreator {
     }
 
     /**
+     * Use case for avatar or any single selection of photo or video
+     */
+    public SelectionCreator allowsMultipleSelection(boolean b) {
+        mSelectionSpec.allowsMultipleSelection = b;
+        return this;
+    }
+
+    /**
      * Start to select media and wait for result.
      *
      * @param requestCode Identity of the request Activity or Fragment.
