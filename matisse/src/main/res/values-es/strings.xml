@@ -15,21 +15,39 @@
   limitations under the License.
   -->
 <resources>
-    <string name="album_name_all">Todos</string>
+    <string name="capture" translatable="false">Capturar</string>
+    <string name="photo" translatable="false">Imágenes</string>
+    <string name="video" translatable="false">Video</string>
+    <string name="album_name_all">Todos los archivos de medios</string>
 
-    <string name="button_preview">Previsualizar</string>
-    <string name="button_apply_default">Seleccionar</string>
-    <string name="button_apply">Seleccionar(%1$d)</string>
+    <string name="button_preview">Vista previa</string>
+    <string name="button_apply_default">Hecho</string>
+    <string name="button_apply">Hecho(%1$d)</string>
     <string name="button_back">Atrás</string>
     <string name="photo_grid_capture">Cámara</string>
-    <string name="empty_text">Ningún archivo seleccionado</string>
-    <string name="button_ok">OK</string>
+    <string name="empty_text">No hay archivos de medios todavía</string>
+    <string name="button_ok">Aceptar</string>
+    <string name="error_over_count_default">Ha alcanzado el máximo seleccionable</string>
 
-    <string name="error_over_count_default">Has alcanzado el máximo de archivos seleccionables</string>
-    <string name="error_over_count">Sólo puede seleccionar hasta %1$d archivos multimedia</string>
+    <plurals name="error_over_count" >
+        <item quantity="one">Solo puede seleccionar hasta 1 archivo de medios</item>
+        <item quantity="other">Solo puede seleccionar hasta %1$d archivos de medios</item>
+    </plurals>
+    <plurals name="error_image_over_count" >
+        <item quantity="one">Solo puede seleccionar hasta 1 archivo de imagen</item>
+        <item quantity="other">Solo puede seleccionar hasta %1$d archivos de imagen</item>
+    </plurals>
+    <plurals name="error_video_over_count" >
+        <item quantity="one">Solo puede seleccionar hasta 1 archivo de vídeo</item>
+        <item quantity="other">Solo puede seleccionar hasta %1$d archivos de vídeo</item>
+    </plurals>
     <string name="error_under_quality">Baja calidad</string>
-    <string name="error_over_quality">Exceso calidad</string>
-    <string name="error_file_type">Tipo de fichero no soportado</string>
-    <string name="error_type_conflict">No se puede seleccionar imágenes y vídeos al mismo tiempo</string>
-    <string name="error_no_video_activity">No se ha encontrado ninguna app que soporte la previsualización de vídeo</string>
+    <string name="error_over_quality">Alta calidad</string>
+    <string name="error_file_type">Tipo de archivo no admitido</string>
+    <string name="error_type_conflict">No se pueden seleccionar imágenes y vídeos al mismo tiempo</string>
+    <string name="error_no_video_activity">No se encontró ninguna aplicación compatible con la vista previa de vídeo</string>
+    <plurals name="alert_title_unsupport_items" >
+        <item quantity="one">1 elemento seleccionado no es compatible; deselecciónelo para continuar</item>
+        <item quantity="other">%1$d elementos seleccionados no son compatibles; deselecciónelos para continuar</item>
+    </plurals>
 </resources>
