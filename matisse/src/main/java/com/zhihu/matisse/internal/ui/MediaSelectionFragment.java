@@ -144,10 +144,10 @@ public class MediaSelectionFragment extends Fragment implements
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(Item item) {
         // notify outer Activity that check state changed
         if (mCheckStateListener != null) {
-            mCheckStateListener.onUpdate();
+            mCheckStateListener.onUpdate(item);
         }
     }
 

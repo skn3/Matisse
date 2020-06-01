@@ -41,12 +41,14 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Album;
 import com.zhihu.matisse.internal.entity.Item;
@@ -507,7 +509,10 @@ public class MatisseActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(Item item) {
+        if (item.mimeType.equals(MimeType.MP4.toString())) {
+            mSpec.delegate.onTapItem(item);
+        }
         // notify bottom toolbar that check state changed.
         updateBottomToolbar();
     }
