@@ -403,7 +403,7 @@ public final class SelectionCreator {
      * alertNBtn: Alert negative button label
      * alertPBtn: Alert positive button label
      */
-    public SelectionCreator dontShowVideoAlert(String alertTitle, String alertBody, String alertNBtn, String alertPBtn) {
+    public SelectionCreator dontShowVideoAlertData(String alertTitle, String alertBody, String alertNBtn, String alertPBtn) {
         mSelectionSpec.alertTitle = alertTitle;
         mSelectionSpec.alertBody = alertBody;
         mSelectionSpec.alertNBtn = alertNBtn;
