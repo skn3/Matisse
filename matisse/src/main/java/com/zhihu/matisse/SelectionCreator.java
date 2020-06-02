@@ -373,6 +373,45 @@ public final class SelectionCreator {
     }
 
     /**
+     * Use case for extended video, max video length or default
+     */
+    public SelectionCreator maxVideoLength(int length) {
+        mSelectionSpec.maxVideoLength = length;
+        return this;
+    }
+
+    /**
+     * Use case for extended video, is feature enabled
+     */
+    public SelectionCreator hasFeatureEnabled(boolean enabled) {
+        mSelectionSpec.hasFeatureEnabled = enabled;
+        return this;
+    }
+
+    /**
+     * Use case for extended video, is feature enabled
+     */
+    public SelectionCreator dontShowVideoAlert(boolean isShown) {
+        mSelectionSpec.isDontShowVideoAlert = isShown;
+        return this;
+    }
+
+    /**
+     * Use case for extended video, is feature enabled
+     * alertTitle: Alert Title display
+     * alertBody: Alert Body message displays
+     * alertNBtn: Alert negative button label
+     * alertPBtn: Alert positive button label
+     */
+    public SelectionCreator dontShowVideoAlert(String alertTitle, String alertBody, String alertNBtn, String alertPBtn) {
+        mSelectionSpec.alertTitle = alertTitle;
+        mSelectionSpec.alertBody = alertBody;
+        mSelectionSpec.alertNBtn = alertNBtn;
+        mSelectionSpec.alertPBtn = alertPBtn;
+        return this;
+    }
+
+    /**
      * Start to select media and wait for result.
      *
      * @param requestCode Identity of the request Activity or Fragment.

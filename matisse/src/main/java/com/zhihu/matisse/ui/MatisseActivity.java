@@ -101,6 +101,7 @@ public class MatisseActivity extends AppCompatActivity implements
     private ContentObserver mObserver;
     private Handler mHandler;
     private Album mAlbum;
+    private Boolean isDontShow = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -511,7 +512,28 @@ public class MatisseActivity extends AppCompatActivity implements
     @Override
     public void onUpdate(Item item) {
         if (item.mimeType.equals(MimeType.MP4.toString())) {
-            mSpec.delegate.onTapItem(item);
+            if (!mSpec.isDontShowVideoAlert && mSpec.hasFeatureEnabled && (item.duration/1000) > mSpec.maxVideoLength) {
+                new android.app.AlertDialog.Builder(this).
+                        setTitle(mSpec.alertTitle).
+                        setMessage(String.format(mSpec.alertBody, mSpec.maxVideoLength)).
+                        setNegativeButton(mSpec.alertNBtn, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                Log.d("MATISSE", "Did Click DONT SHOW");
+                                mSpec.isDontShowVideoAlert = true;
+                                mSpec.delegate.onTapItem(null, true);
+                            }
+                        }).
+                        setPositiveButton(mSpec.alertPBtn, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Log.d("MATISSE", "Did Click OK");
+                            }
+                        }).
+                        setCancelable(false).
+                        show();
+            }
+            mSpec.delegate.onTapItem(item, false);
         }
         // notify bottom toolbar that check state changed.
         updateBottomToolbar();

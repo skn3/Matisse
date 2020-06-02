@@ -145,6 +145,9 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
                 .theme(theme)
                 .delegate(this)
                 .allowsMultipleSelection(true)
+                .maxVideoLength(120)
+                .hasFeatureEnabled(true)
+                .dontShowVideoAlert(false)
                 .forResult(REQUEST_CODE_CHOOSE, mSelectedUris);
 
     }
@@ -166,8 +169,9 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
-    public Item onTapItem(Item item) {
-        Log.d("ACTIVITY_MATISSE", String.format("DURATION: %d seconds", (item.duration/1000)));
-        return null;
+    public void onTapItem(Item item, Boolean isDontShow) {
+        if (item != null) {
+            Log.d("ACTIVITY_MATISSE", String.format("DURATION: %d seconds", (item.duration/1000)));
+        }
     }
 }

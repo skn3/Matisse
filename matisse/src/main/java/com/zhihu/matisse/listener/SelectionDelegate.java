@@ -15,5 +15,5 @@ import com.zhihu.matisse.internal.model.SelectedItemCollection;
  */
 public interface SelectionDelegate {
 	String getCause(SelectedItemCollection.MaxItemReach reach);
-	Item onTapItem(Item item);
+	void onTapItem(Item item, Boolean isDontShow);
 }

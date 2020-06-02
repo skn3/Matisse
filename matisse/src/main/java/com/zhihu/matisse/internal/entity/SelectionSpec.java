@@ -59,6 +59,13 @@ public final class SelectionSpec {
     public boolean enablePreview;
     public boolean allowsMultipleSelection;
     public boolean showUseOrigin;
+    public int maxVideoLength;
+    public boolean hasFeatureEnabled;
+    public boolean isDontShowVideoAlert;
+    public String alertTitle;
+    public String alertBody;
+    public String alertNBtn;
+    public String alertPBtn;
 
     public SelectionDelegate getDelegate() {
         return delegate;
@@ -106,6 +113,13 @@ public final class SelectionSpec {
         originalMaxSize = Integer.MAX_VALUE;
         enablePreview = false;
         allowsMultipleSelection = true;
+        maxVideoLength = 15;
+        hasFeatureEnabled = false;
+        isDontShowVideoAlert = false;
+        alertTitle = "Long Video";
+        alertBody = "Video longer than %ds will be trimmed when you upload.";
+        alertNBtn = "Dont Show";
+        alertPBtn = "OK";
     }
 
     public boolean singleSelectionModeEnabled() {
