@@ -516,18 +516,12 @@ public class MatisseActivity extends AppCompatActivity implements
                 new android.app.AlertDialog.Builder(this).
                         setTitle(mSpec.alertTitle).
                         setMessage(String.format(mSpec.alertBody, mSpec.maxVideoLength)).
-                        setNegativeButton(mSpec.alertNBtn, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                Log.d("MATISSE", "Did Click DONT SHOW");
-                                mSpec.isDontShowVideoAlert = true;
-                                mSpec.delegate.onTapItem(null, true);
-                            }
-                        }).
                         setPositiveButton(mSpec.alertPBtn, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Log.d("MATISSE", "Did Click OK");
+//                                Log.d("MATISSE", "Did Click OK");
+                                mSpec.isDontShowVideoAlert = true;
+                                mSpec.delegate.onTapItem(null, true);
                             }
                         }).
                         setCancelable(false).
