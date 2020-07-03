@@ -262,7 +262,17 @@ public class MatisseActivity extends AppCompatActivity implements
             //refresh and select
 	        mAlbumCollection.loadAlbums();
 	        ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
-	        selectedUris.add(contentUri);
+	        // add condition here where to select or not and broadcast message for the prompts
+            if (selectedUris.size() < (mSpec.maxImageSelectable + mSpec.maxVideoSelectable)) {
+                selectedUris.add(contentUri);
+                // broadcast message for camera roll
+                ArrayList<Uri> newlyCapture = new ArrayList<Uri>();
+                newlyCapture.add(contentUri);
+                ArrayList<Item> newlySelection = AlbumMediaLoader.querySelection(this, newlyCapture);
+                this.onUpdate(newlySelection.get(0));
+            }
+	        // end
+
             ArrayList<Item> selection = AlbumMediaLoader.querySelection(this, selectedUris);
 
 	        int collectionType = mSelectedCollection.getCollectionType();
