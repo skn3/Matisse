@@ -41,7 +41,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -264,12 +263,25 @@ public class MatisseActivity extends AppCompatActivity implements
 	        ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
 	        // add condition here where to select or not and broadcast message for the prompts
             if (selectedUris.size() < mSpec.maxImageSelectable) {
-                selectedUris.add(contentUri);
                 // broadcast message for camera roll
+                ArrayList<Item> tempSelection = AlbumMediaLoader.querySelection(this, selectedUris);
+                int nVideo = selectedVideos(tempSelection);
+                Boolean isSelected = false;
                 ArrayList<Uri> newlyCapture = new ArrayList<Uri>();
                 newlyCapture.add(contentUri);
                 ArrayList<Item> newlySelection = AlbumMediaLoader.querySelection(this, newlyCapture);
-                this.onUpdate(newlySelection.get(0));
+                if (newlySelection.get(0).mimeType.equals(MimeType.MP4.toString())) {
+                    // check current selected count video
+                    if (nVideo < mSpec.maxVideoSelectable) {
+                        isSelected = true;
+                    }
+                } else {
+                    isSelected = true;
+                }
+                if (isSelected) {
+                    selectedUris.add(contentUri);
+                    this.onUpdate(newlySelection.get(0));
+                }
             }
 	        // end
 
@@ -406,6 +418,14 @@ public class MatisseActivity extends AppCompatActivity implements
             mButtonApply.setEnabled(true);
             mButtonApply.setText(getString(R.string.button_apply, selectedCount));
         }
+    }
+
+    private int selectedVideos(ArrayList<Item> mItems){
+        int nVideo = 0;
+        for (Item i : mItems) {
+            if (i.isVideo()) nVideo++;
+        }
+        return nVideo;
     }
 
     @Override
