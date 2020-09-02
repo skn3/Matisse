@@ -86,7 +86,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .countable(true)
                         .capture(true)
                         .captureStrategy(
-                                new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider", "test"))
+                                new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
                         .maxSelectable(9)
                         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                         .gridExpectedSize(
@@ -146,7 +146,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
             mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
-            Log.e("OnActivityResult ", String.valueOf(Matisse.obtainOriginalState(data)));
+//            Log.e("OnActivityResult ", String.valueOf(Matisse.obtainOriginalState(data)));
         }
     }
 
