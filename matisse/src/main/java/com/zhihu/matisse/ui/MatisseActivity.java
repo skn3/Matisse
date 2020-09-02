@@ -28,6 +28,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
@@ -35,12 +36,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.media.ExifInterface;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -67,6 +70,8 @@ import com.zhihu.matisse.internal.utils.PathUtils;
 
 import java.io.File;
 import java.io.IOException;
+import com.zhihu.matisse.internal.utils.SingleMediaScanner;
+
 import java.util.ArrayList;
 
 /**
@@ -305,6 +310,7 @@ public class MatisseActivity extends AppCompatActivity implements
             return addImageToGallery(cr, filepath, type);
         }else if(type.contains("video")){
             return addVideoToGallery(cr, filepath, type);
+
         }
         return null;
     }
@@ -356,6 +362,7 @@ public class MatisseActivity extends AppCompatActivity implements
             values.put(MediaStore.Video.Media.DURATION, duration);
             values.put(MediaStore.Video.Media.LATITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
             values.put(MediaStore.Video.Media.LONGITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+
         }
 
         return cr.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
