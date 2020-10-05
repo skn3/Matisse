@@ -15,21 +15,39 @@
   limitations under the License.
   -->
 <resources>
+    <string name="capture" translatable="false">Acquisisci</string>
+    <string name="photo" translatable="false">Foto</string>
+    <string name="video" translatable="false">Video</string>
     <string name="album_name_all">Tutti i media</string>
 
     <string name="button_preview">Anteprima</string>
-    <string name="button_apply_default">Conferma</string>
-    <string name="button_apply">Conferma(%1$d)</string>
+    <string name="button_apply_default">Fatto</string>
+    <string name="button_apply">Fatto(%1$d)</string>
     <string name="button_back">Indietro</string>
-    <string name="photo_grid_capture">Camera</string>
-    <string name="empty_text">Nessun media disponibile</string>
+    <string name="photo_grid_capture">Fotocamera</string>
+    <string name="empty_text">Ancora nessun media presente</string>
     <string name="button_ok">OK</string>
+    <string name="error_over_count_default">Hai raggiunto il numero massimo di selezioni</string>
 
-    <string name="error_over_count_default">Hai selezionato il numero massimo di elementi</string>
-    <string name="error_over_count">Puoi selezionare fino a %1$d elementi</string>
-    <string name="error_under_quality">Sotto qualità</string>
-    <string name="error_over_quality">Sopra qualità</string>
+    <plurals name="error_over_count" >
+        <item quantity="one">È possibile selezionare solo max 1 file multimediale</item>
+        <item quantity="other">È possibile selezionare solo max %1$d file multimediali</item>
+    </plurals>
+    <plurals name="error_image_over_count" >
+        <item quantity="one">È possibile selezionare solo max 1 file di immagine</item>
+        <item quantity="other">È possibile selezionare solo max %1$d file di immagine</item>
+    </plurals>
+    <plurals name="error_video_over_count" >
+        <item quantity="one">È possibile selezionare solo max 1 file video</item>
+        <item quantity="other">È possibile selezionare solo max %1$d file video</item>
+    </plurals>
+    <string name="error_under_quality">Qualità inferiore</string>
+    <string name="error_over_quality">Qualità superiore</string>
     <string name="error_file_type">Tipo di file non supportato</string>
-    <string name="error_type_conflict">Non è possibile selezionare contemporaneamente immagini e video</string>
-    <string name="error_no_video_activity">Non è stata trovata alcuna app che supporti l\'anteprima video</string>
+    <string name="error_type_conflict">Impossibile selezionare immagini e video contemporaneamente</string>
+    <string name="error_no_video_activity">Non è stata trovata nessuna app in grado di supportare l’anteprima video</string>
+    <plurals name="alert_title_unsupport_items" >
+        <item quantity="one">1 voce selezionata non è supportata, deselezionare per continuare</item>
+        <item quantity="other">%1$d voci selezionate non sono supportate, deselezionare per continuare</item>
+    </plurals>
 </resources>

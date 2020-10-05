@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2017 Zhihu Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<resources>
+    <string name="capture" translatable="false">Enregistrer</string>
+    <string name="photo" translatable="false">Photo</string>
+    <string name="video" translatable="false">Vidéo</string>
+    <string name="album_name_all">Tous les médias</string>
+
+    <string name="button_preview">Prévisualisation</string>
+    <string name="button_apply_default">Terminé</string>
+    <string name="button_apply">Terminé (%1$d)</string>
+    <string name="button_back">Retour</string>
+    <string name="photo_grid_capture">Appareil photo</string>
+    <string name="empty_text">Encore aucun média</string>
+    <string name="button_ok">OK</string>
+    <string name="error_over_count_default">Vous avez atteint le nombre maximal de sélections possibles</string>
+
+    <plurals name="error_over_count" >
+        <item quantity="one">Vous ne pouvez sélectionner que %1$d fichier média maximum</item>
+        <item quantity="other">Vous ne pouvez sélectionner que %1$d fichiers média maximum</item>
+    </plurals>
+    <plurals name="error_image_over_count" >
+        <item quantity="one">Vous ne pouvez sélectionner que %1$d fichiers image maximum</item>
+        <item quantity="other">Vous ne pouvez sélectionner que %1$d fichiers image maximum</item>
+    </plurals>
+    <plurals name="error_video_over_count" >
+        <item quantity="one">Vous ne pouvez sélectionner que %1$d fichiers vidéo maximum</item>
+        <item quantity="other">Vous ne pouvez sélectionner que %1$d fichiers vidéo maximum</item>
+    </plurals>
+    <string name="error_under_quality">Qualité inférieure</string>
+    <string name="error_over_quality">Qualité supérieure</string>
+    <string name="error_file_type">Type de fichier non pris en charge</string>
+    <string name="error_type_conflict">Impossible de sélectionner des images et des vidéos en même temps</string>
+    <string name="error_no_video_activity">Aucune application trouvée prenant en charge la prévisualisation de la vidéo</string>
+    <plurals name="alert_title_unsupport_items" >
+        <item quantity="one">%1$d éléments sélectionnés non pris en charge : annulez la sélection pour continuer</item>
+        <item quantity="other">%1$d éléments sélectionnés non pris en charge : annulez la sélection pour continuer</item>
+    </plurals>
+</resources>
