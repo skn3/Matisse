@@ -20,13 +20,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.FloatRange;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.annotation.StyleRes;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.StyleRes;
+import androidx.fragment.app.Fragment;
 
 import com.zhihu.matisse.engine.ImageEngine;
 import com.zhihu.matisse.filter.Filter;
@@ -244,7 +245,7 @@ public final class SelectionCreator {
 
     /**
      * Capture strategy provided for the location to save photos including internal and external
-     * storage and also a authority for {@link android.support.v4.content.FileProvider}.
+     * storage and also a authority for {@link androidx.core.content.FileProvider}.
      *
      * @param captureStrategy {@link CaptureStrategy}, needed only when capturing is enabled.
      * @return {@link SelectionCreator} for fluent API.
@@ -373,6 +374,45 @@ public final class SelectionCreator {
     }
 
     /**
+     * Use case for extended video, max video length or default
+     */
+    public SelectionCreator maxVideoLength(int length) {
+        mSelectionSpec.maxVideoLength = length;
+        return this;
+    }
+
+    /**
+     * Use case for extended video, is feature enabled
+     */
+    public SelectionCreator hasFeatureEnabled(boolean enabled) {
+        mSelectionSpec.hasFeatureEnabled = enabled;
+        return this;
+    }
+
+    /**
+     * Use case for extended video, is feature enabled
+     */
+    public SelectionCreator dontShowVideoAlert(boolean isShown) {
+        mSelectionSpec.isDontShowVideoAlert = isShown;
+        return this;
+    }
+
+    /**
+     * Use case for extended video, is feature enabled
+     * alertTitle: Alert Title display
+     * alertBody: Alert Body message displays
+     * alertNBtn: Alert negative button label
+     * alertPBtn: Alert positive button label
+     */
+    public SelectionCreator dontShowVideoAlertData(String alertTitle, String alertBody, String alertNBtn, String alertPBtn) {
+        mSelectionSpec.alertTitle = alertTitle;
+        mSelectionSpec.alertBody = alertBody;
+        mSelectionSpec.alertNBtn = alertNBtn;
+        mSelectionSpec.alertPBtn = alertPBtn;
+        return this;
+    }
+
+    /**
      * Start to select media and wait for result.
      *
      * @param requestCode Identity of the request Activity or Fragment.
@@ -410,4 +450,8 @@ public final class SelectionCreator {
         return this;
     }
 
+    public SelectionCreator showPreview(boolean showPreview) {
+        mSelectionSpec.showPreview = showPreview;
+        return this;
+    }
 }

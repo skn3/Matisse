@@ -1,5 +1,6 @@
 package com.zhihu.matisse.listener;
 
+import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.model.SelectedItemCollection;
 
 /**
@@ -14,4 +15,5 @@ import com.zhihu.matisse.internal.model.SelectedItemCollection;
  */
 public interface SelectionDelegate {
 	String getCause(SelectedItemCollection.MaxItemReach reach);
+	void onTapItem(Item item, Boolean isDontShow);
 }

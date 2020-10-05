@@ -17,7 +17,8 @@
 package com.zhihu.matisse.internal.entity;
 
 import android.content.pm.ActivityInfo;
-import android.support.annotation.StyleRes;
+
+import androidx.annotation.StyleRes;
 
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.R;
@@ -59,6 +60,14 @@ public final class SelectionSpec {
     public boolean enablePreview;
     public boolean allowsMultipleSelection;
     public boolean showUseOrigin;
+    public int maxVideoLength;
+    public boolean hasFeatureEnabled;
+    public boolean isDontShowVideoAlert;
+    public String alertTitle;
+    public String alertBody;
+    public String alertNBtn;
+    public String alertPBtn;
+    public boolean showPreview;
 
     public SelectionDelegate getDelegate() {
         return delegate;
@@ -106,6 +115,14 @@ public final class SelectionSpec {
         originalMaxSize = Integer.MAX_VALUE;
         enablePreview = false;
         allowsMultipleSelection = true;
+        maxVideoLength = 15;
+        hasFeatureEnabled = false;
+        isDontShowVideoAlert = false;
+        alertTitle = "Long Video";
+        alertBody = "Video longer than %ds will be trimmed when you upload.";
+        alertNBtn = "Dont Show";
+        alertPBtn = "OK";
+        showPreview = true;
     }
 
     public boolean singleSelectionModeEnabled() {
@@ -122,6 +139,10 @@ public final class SelectionSpec {
 
     public boolean onlyShowVideos() {
         return showSingleMediaType && MimeType.ofVideo().containsAll(mimeTypeSet);
+    }
+
+    public boolean onlyShowGif() {
+        return showSingleMediaType && MimeType.ofGif().equals(mimeTypeSet);
     }
 
     private static final class InstanceHolder {

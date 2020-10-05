@@ -20,8 +20,8 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -163,41 +163,49 @@ public class AlbumMediaAdapter extends
 
     @Override
     public void onThumbnailClicked(ImageView thumbnail, Item item, RecyclerView.ViewHolder holder) {
-        if (mOnMediaClickListener != null) {
-            mOnMediaClickListener.onMediaClick(null, item, holder.getAdapterPosition());
+        if (mSelectionSpec.showPreview) {
+            if (mOnMediaClickListener != null) {
+                mOnMediaClickListener.onMediaClick(null, item, holder.getAdapterPosition());
+            }
+        } else {
+            updateSelectedItem(item, holder);
         }
     }
 
     @Override
     public void onCheckViewClicked(CheckView checkView, Item item, RecyclerView.ViewHolder holder) {
+        updateSelectedItem(item, holder);
+    }
+
+    private void updateSelectedItem(Item item, RecyclerView.ViewHolder holder) {
         if (mSelectionSpec.countable) {
             int checkedNum = mSelectedCollection.checkedNumOf(item);
             if (checkedNum == CheckView.UNCHECKED) {
                 if (assertAddSelection(holder.itemView.getContext(), item)) {
                     mSelectedCollection.add(item);
-                    notifyCheckStateChanged();
+                    notifyCheckStateChanged(item, true);
                 }
             } else {
                 mSelectedCollection.remove(item);
-                notifyCheckStateChanged();
+                notifyCheckStateChanged(item, false);
             }
         } else {
             if (mSelectedCollection.isSelected(item)) {
                 mSelectedCollection.remove(item);
-                notifyCheckStateChanged();
+                notifyCheckStateChanged(item, false);
             } else {
                 if (assertAddSelection(holder.itemView.getContext(), item)) {
                     mSelectedCollection.add(item);
-                    notifyCheckStateChanged();
+                    notifyCheckStateChanged(item, true);
                 }
             }
         }
     }
 
-    private void notifyCheckStateChanged() {
+    private void notifyCheckStateChanged(Item item, Boolean isSelected) {
         notifyDataSetChanged();
-        if (mCheckStateListener != null) {
-            mCheckStateListener.onUpdate();
+        if (mCheckStateListener != null && isSelected) {
+            mCheckStateListener.onUpdate(item);
         }
     }
 
@@ -260,7 +268,7 @@ public class AlbumMediaAdapter extends
     }
 
     public interface CheckStateListener {
-        void onUpdate();
+        void onUpdate(Item item);
     }
 
     public interface OnMediaClickListener {

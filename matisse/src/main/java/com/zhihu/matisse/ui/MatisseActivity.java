@@ -28,6 +28,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
@@ -35,18 +36,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.media.ExifInterface;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.Album;
 import com.zhihu.matisse.internal.entity.Item;
@@ -66,6 +70,8 @@ import com.zhihu.matisse.internal.utils.PathUtils;
 
 import java.io.File;
 import java.io.IOException;
+import com.zhihu.matisse.internal.utils.SingleMediaScanner;
+
 import java.util.ArrayList;
 
 /**
@@ -99,6 +105,7 @@ public class MatisseActivity extends AppCompatActivity implements
     private ContentObserver mObserver;
     private Handler mHandler;
     private Album mAlbum;
+    private Boolean isDontShow = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -259,7 +266,30 @@ public class MatisseActivity extends AppCompatActivity implements
             //refresh and select
 	        mAlbumCollection.loadAlbums();
 	        ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
-	        selectedUris.add(contentUri);
+	        // add condition here where to select or not and broadcast message for the prompts
+            if (selectedUris.size() < mSpec.maxImageSelectable) {
+                // broadcast message for camera roll
+                ArrayList<Item> tempSelection = AlbumMediaLoader.querySelection(this, selectedUris);
+                int nVideo = selectedVideos(tempSelection);
+                Boolean isSelected = false;
+                ArrayList<Uri> newlyCapture = new ArrayList<Uri>();
+                newlyCapture.add(contentUri);
+                ArrayList<Item> newlySelection = AlbumMediaLoader.querySelection(this, newlyCapture);
+                if (newlySelection.get(0).mimeType.equals(MimeType.MP4.toString())) {
+                    // check current selected count video
+                    if (nVideo < mSpec.maxVideoSelectable) {
+                        isSelected = true;
+                    }
+                } else {
+                    isSelected = true;
+                }
+                if (isSelected) {
+                    selectedUris.add(contentUri);
+                    this.onUpdate(newlySelection.get(0));
+                }
+            }
+	        // end
+
             ArrayList<Item> selection = AlbumMediaLoader.querySelection(this, selectedUris);
 
 	        int collectionType = mSelectedCollection.getCollectionType();
@@ -280,6 +310,7 @@ public class MatisseActivity extends AppCompatActivity implements
             return addImageToGallery(cr, filepath, type);
         }else if(type.contains("video")){
             return addVideoToGallery(cr, filepath, type);
+
         }
         return null;
     }
@@ -331,6 +362,7 @@ public class MatisseActivity extends AppCompatActivity implements
             values.put(MediaStore.Video.Media.DURATION, duration);
             values.put(MediaStore.Video.Media.LATITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
             values.put(MediaStore.Video.Media.LONGITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+
         }
 
         return cr.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
@@ -393,6 +425,14 @@ public class MatisseActivity extends AppCompatActivity implements
             mButtonApply.setEnabled(true);
             mButtonApply.setText(getString(R.string.button_apply, selectedCount));
         }
+    }
+
+    private int selectedVideos(ArrayList<Item> mItems){
+        int nVideo = 0;
+        for (Item i : mItems) {
+            if (i.isVideo()) nVideo++;
+        }
+        return nVideo;
     }
 
     @Override
@@ -507,7 +547,25 @@ public class MatisseActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onUpdate() {
+    public void onUpdate(Item item) {
+        if (item.mimeType.equals(MimeType.MP4.toString())) {
+            if (!mSpec.isDontShowVideoAlert && mSpec.hasFeatureEnabled && (item.duration/1000) > mSpec.maxVideoLength) {
+                new android.app.AlertDialog.Builder(this).
+                        setTitle(mSpec.alertTitle).
+                        setMessage(String.format(mSpec.alertBody, mSpec.maxVideoLength)).
+                        setPositiveButton(mSpec.alertPBtn, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                Log.d("MATISSE", "Did Click OK");
+                                mSpec.isDontShowVideoAlert = true;
+                                mSpec.delegate.onTapItem(null, true);
+                            }
+                        }).
+                        setCancelable(false).
+                        show();
+            }
+            mSpec.delegate.onTapItem(item, false);
+        }
         // notify bottom toolbar that check state changed.
         updateBottomToolbar();
     }

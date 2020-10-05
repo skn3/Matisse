@@ -4,13 +4,16 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -21,6 +24,7 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
+import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.model.SelectedItemCollection;
 import com.zhihu.matisse.listener.SelectionDelegate;
 
@@ -143,6 +147,9 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
                 .theme(theme)
                 .delegate(this)
                 .allowsMultipleSelection(true)
+                .maxVideoLength(120)
+                .hasFeatureEnabled(true)
+                .dontShowVideoAlert(false)
                 .forResult(REQUEST_CODE_CHOOSE, mSelectedUris);
 
     }
@@ -161,5 +168,12 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
                 return "My cause";
         }
 
+    }
+
+    @Override
+    public void onTapItem(Item item, Boolean isDontShow) {
+        if (item != null) {
+            Log.d("ACTIVITY_MATISSE", String.format("DURATION: %d seconds", (item.duration/1000)));
+        }
     }
 }
