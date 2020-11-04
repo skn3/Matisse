@@ -145,14 +145,6 @@ public final class PhotoMetadataUtils {
             return false;
         }
         ContentResolver resolver = context.getContentResolver();
-        // get full file path here to detect other file unsuppported
-        String fullPath = PhotoMetadataUtils.getPath(resolver, item.getContentUri());
-        if (fullPath.endsWith("3gp") || fullPath.endsWith("3gpp")
-                || fullPath.endsWith("mkv") || fullPath.endsWith("webm")
-                || fullPath.endsWith("ts") || fullPath.endsWith("avi")) {
-            return false;
-        }
-
         for (MimeType type : SelectionSpec.getInstance().mimeTypeSet) {
             if (type.checkType(resolver, item.getContentUri())) {
                 return true;
