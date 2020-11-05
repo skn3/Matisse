@@ -183,28 +183,28 @@ public class AlbumMediaAdapter extends
             if (checkedNum == CheckView.UNCHECKED) {
                 if (assertAddSelection(holder.itemView.getContext(), item)) {
                     mSelectedCollection.add(item);
-                    notifyCheckStateChanged(item, true);
+                    notifyCheckStateChanged(item);
                 }
             } else {
                 mSelectedCollection.remove(item);
-                notifyCheckStateChanged(item, false);
+                notifyCheckStateChanged(item);
             }
         } else {
             if (mSelectedCollection.isSelected(item)) {
                 mSelectedCollection.remove(item);
-                notifyCheckStateChanged(item, false);
+                notifyCheckStateChanged(item);
             } else {
                 if (assertAddSelection(holder.itemView.getContext(), item)) {
                     mSelectedCollection.add(item);
-                    notifyCheckStateChanged(item, true);
+                    notifyCheckStateChanged(item);
                 }
             }
         }
     }
 
-    private void notifyCheckStateChanged(Item item, Boolean isSelected) {
+    private void notifyCheckStateChanged(Item item) {
         notifyDataSetChanged();
-        if (mCheckStateListener != null && isSelected) {
+        if (mCheckStateListener != null) {
             mCheckStateListener.onUpdate(item);
         }
     }
