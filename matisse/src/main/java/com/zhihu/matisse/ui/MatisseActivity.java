@@ -511,24 +511,29 @@ public class MatisseActivity extends AppCompatActivity implements
         ArrayList<String> selectedPaths = (ArrayList<String>) mSelectedCollection.asListOfString();
 
         int brokenItems = 0;
-        for (int i = 0 ; i < selectedUris.size() ; i++){
-
-            String mimeType = getMimeType(MatisseActivity.this, selectedUris.get(i));
-            if (mimeType.contains("video")) {
-                //precheck
-                MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-                mediaMetadataRetriever.setDataSource(this, selectedUris.get(i));
-                long durationMs = 0;
-                String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-                if (duration != null) {
-                    durationMs = Long.parseLong(duration);
+        for (int i = selectedUris.size()-1; i >= 0; i--){
+            if (getMimeType(MatisseActivity.this, selectedUris.get(i)) != null) {
+                String mimeType = getMimeType(MatisseActivity.this, selectedUris.get(i));
+                if (mimeType.contains("video")) {
+                    //precheck
+                    MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+                    mediaMetadataRetriever.setDataSource(this, selectedUris.get(i));
+                    long durationMs = 0;
+                    String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                    if (duration != null) {
+                        durationMs = Long.parseLong(duration);
+                    }
+                    if (durationMs <= 0) {
+                        //prompt
+                        brokenItems++;
+                    }
                 }
-                if (durationMs <= 0) {
-                    //prompt
-                    brokenItems++;
-                }
+            } else {
+                selectedPaths.remove(i);
+                selectedUris.remove(i);
             }
         }
+
         if(brokenItems > 0) {
 
             Resources res = getResources();
