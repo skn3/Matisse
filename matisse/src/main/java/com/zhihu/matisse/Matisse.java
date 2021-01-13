@@ -96,6 +96,10 @@ public final class Matisse {
         return data.getStringArrayListExtra(MatisseActivity.EXTRA_RESULT_SELECTION_PATH);
     }
 
+    public static int obtainRemovedItemsCount(Intent data) {
+        return data.getIntExtra(MatisseActivity.EXTRA_RESULT_DELETED_ITEM_COUNT, 0);
+    }
+
     /**
      * MIME types the selection constrains on.
      * <p>

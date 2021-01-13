@@ -86,6 +86,7 @@ public class MatisseActivity extends AppCompatActivity implements
 
     public static final String EXTRA_RESULT_SELECTION = "extra_result_selection";
     public static final String EXTRA_RESULT_SELECTION_PATH = "extra_result_selection_path";
+    public static final String EXTRA_RESULT_DELETED_ITEM_COUNT = "extra_result_deleted_item_count";
     private static final int REQUEST_CODE_PREVIEW = 23;
     private static final int REQUEST_CODE_CAPTURE = 24;
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 25;
@@ -511,6 +512,7 @@ public class MatisseActivity extends AppCompatActivity implements
         ArrayList<String> selectedPaths = (ArrayList<String>) mSelectedCollection.asListOfString();
 
         int brokenItems = 0;
+        int removedItems = 0;
         for (int i = selectedUris.size()-1; i >= 0; i--){
             if (getMimeType(MatisseActivity.this, selectedUris.get(i)) != null) {
                 String mimeType = getMimeType(MatisseActivity.this, selectedUris.get(i));
@@ -531,6 +533,7 @@ public class MatisseActivity extends AppCompatActivity implements
             } else {
                 selectedPaths.remove(i);
                 selectedUris.remove(i);
+                removedItems++;
             }
         }
 
@@ -547,6 +550,7 @@ public class MatisseActivity extends AppCompatActivity implements
 
         result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris);
         result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths);
+        result.putExtra(EXTRA_RESULT_DELETED_ITEM_COUNT, removedItems);
         setResult(RESULT_OK, result);
         finish();
     }
