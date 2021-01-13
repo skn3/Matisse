@@ -35,6 +35,7 @@ import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.entity.SelectionSpec;
 import com.zhihu.matisse.internal.entity.IncapableCause;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +45,9 @@ import java.util.Locale;
 
 public final class PhotoMetadataUtils {
     private static final String TAG = PhotoMetadataUtils.class.getSimpleName();
+    private static final String FILE_DOES_NOT_EXIST_ERROR = "file_does_not_exist_error";
+    private static final String FILE_NOT_SUPPORTED_ERROR = "file_not_supported_error";
+    private static final String FILE_SUPPORTED = "file_supported";
     private static final int MAX_WIDTH = 1600;
     private static final String SCHEME_CONTENT = "content";
 
@@ -125,8 +129,10 @@ public final class PhotoMetadataUtils {
     }
 
     public static IncapableCause isAcceptable(Context context, Item item) {
-        if (!isSelectableType(context, item)) {
+        if (isSelectableType(context, item).equals(FILE_NOT_SUPPORTED_ERROR)) {
             return new IncapableCause(context.getString(R.string.error_file_type));
+        } else if (isSelectableType(context, item).equals(FILE_DOES_NOT_EXIST_ERROR)) {
+            return new IncapableCause(context.getString(R.string.error_missing_file));
         }
 
         if (SelectionSpec.getInstance().filters != null) {
@@ -140,25 +146,30 @@ public final class PhotoMetadataUtils {
         return null;
     }
 
-    private static boolean isSelectableType(Context context, Item item) {
+    private static String isSelectableType(Context context, Item item) {
         if (context == null) {
-            return false;
+            return FILE_NOT_SUPPORTED_ERROR;
         }
         ContentResolver resolver = context.getContentResolver();
         // get full file path here to detect other file unsuppported
-        String fullPath = PhotoMetadataUtils.getPath(resolver, item.getContentUri());
-        if (fullPath.endsWith("3gp") || fullPath.endsWith("3gpp")
-                || fullPath.endsWith("mkv") || fullPath.endsWith("webm")
-                || fullPath.endsWith("ts") || fullPath.endsWith("avi")) {
-            return false;
+        if (getFileExist(resolver, item.getContentUri())) {
+            String fullPath = PhotoMetadataUtils.getPath(resolver, item.getContentUri());
+            if (fullPath.endsWith("3gp") || fullPath.endsWith("3gpp")
+                    || fullPath.endsWith("mkv") || fullPath.endsWith("webm")
+                    || fullPath.endsWith("ts") || fullPath.endsWith("avi")) {
+                return FILE_NOT_SUPPORTED_ERROR;
+            }
+
+            for (MimeType type : SelectionSpec.getInstance().mimeTypeSet) {
+                if (type.checkType(resolver, item.getContentUri())) {
+                    return FILE_SUPPORTED;
+                }
+            }
+        } else {
+            return FILE_DOES_NOT_EXIST_ERROR;
         }
 
-        for (MimeType type : SelectionSpec.getInstance().mimeTypeSet) {
-            if (type.checkType(resolver, item.getContentUri())) {
-                return true;
-            }
-        }
-        return false;
+        return FILE_NOT_SUPPORTED_ERROR;
     }
 
     private static boolean shouldRotate(ContentResolver resolver, Uri uri) {
@@ -178,5 +189,23 @@ public final class PhotoMetadataUtils {
         DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
         df.applyPattern("0.0");
         return Float.valueOf(df.format((float) sizeInBytes / 1024 / 1024));
+    }
+
+    private static boolean getFileExist(ContentResolver contentResolver, Uri contentUri) {
+        String[] projection = { MediaStore.MediaColumns.DATA };
+        Cursor cur = contentResolver.query(contentUri, projection, null, null, null);
+        if (cur != null) {
+            if (cur.moveToFirst()) {
+                String filePath = cur.getString(0);
+
+                cur.close();
+                return new File(filePath).exists();
+            } else {
+                cur.close();
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 }
