@@ -36,6 +36,7 @@ import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.entity.SelectionSpec;
 import com.zhihu.matisse.internal.loader.AlbumMediaLoader;
 import com.zhihu.matisse.internal.model.SelectedItemCollection;
+import com.zhihu.matisse.listener.OnCameraSelected;
 import com.zhihu.matisse.listener.OnCheckedListener;
 import com.zhihu.matisse.listener.OnSelectedListener;
 import com.zhihu.matisse.listener.SelectionDelegate;
@@ -348,6 +349,11 @@ public final class SelectionCreator {
      */
     public SelectionCreator setOnCheckedListener(@Nullable OnCheckedListener listener) {
         mSelectionSpec.onCheckedListener = listener;
+        return this;
+    }
+
+    public SelectionCreator setOnCameraSelectedListener(OnCameraSelected listener) {
+        mSelectionSpec.onCameraSelected = listener;
         return this;
     }
     /**

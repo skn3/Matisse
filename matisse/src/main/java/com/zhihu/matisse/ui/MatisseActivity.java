@@ -595,6 +595,7 @@ public class MatisseActivity extends AppCompatActivity implements
 
     @Override
     public void capture() {
+        mSpec.onCameraSelected.cameraSelected();
         if (mMediaStoreCompat != null) {
             if(mSpec.onlyShowImages()){
                 mMediaStoreCompat.dispatchCaptureIntent(MatisseActivity.this, MediaStore.ACTION_IMAGE_CAPTURE, REQUEST_CODE_CAPTURE_IMAGE);

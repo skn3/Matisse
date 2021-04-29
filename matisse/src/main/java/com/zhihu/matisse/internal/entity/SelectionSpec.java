@@ -25,6 +25,7 @@ import com.zhihu.matisse.R;
 import com.zhihu.matisse.engine.ImageEngine;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.filter.Filter;
+import com.zhihu.matisse.listener.OnCameraSelected;
 import com.zhihu.matisse.listener.OnCheckedListener;
 import com.zhihu.matisse.listener.OnSelectedListener;
 import com.zhihu.matisse.listener.SelectionDelegate;
@@ -68,6 +69,7 @@ public final class SelectionSpec {
     public String alertNBtn;
     public String alertPBtn;
     public boolean showPreview;
+    public OnCameraSelected onCameraSelected;
 
     public SelectionDelegate getDelegate() {
         return delegate;

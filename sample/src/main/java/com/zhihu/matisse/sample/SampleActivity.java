@@ -39,10 +39,11 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
+import com.zhihu.matisse.listener.OnCameraSelected;
 
 import java.util.List;
 
-public class SampleActivity extends AppCompatActivity implements View.OnClickListener {
+public class SampleActivity extends AppCompatActivity implements View.OnClickListener, OnCameraSelected {
 
     private static final int REQUEST_CODE_CHOOSE = 23;
 
@@ -104,6 +105,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                         .setOnCheckedListener(isChecked -> {
                             Log.e("isChecked", "onCheck: isChecked=" + isChecked);
                         })
+                        .setOnCameraSelectedListener(this)
                         .forResult(REQUEST_CODE_CHOOSE);
                 break;
             case R.id.dracula:
@@ -148,6 +150,10 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
             mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
 //            Log.e("OnActivityResult ", String.valueOf(Matisse.obtainOriginalState(data)));
         }
+    }
+
+    @Override
+    public void cameraSelected() {
     }
 
     private static class UriAdapter extends RecyclerView.Adapter<UriAdapter.UriViewHolder> {
