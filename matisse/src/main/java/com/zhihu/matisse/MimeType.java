@@ -50,7 +50,7 @@ public enum MimeType {
             "heif",
             "heif"
     )),
-    HEIC("image/heif", arraySetOf(
+    HEIC("image/heic", arraySetOf(
             "heic",
             "heic"
     )),
