@@ -26,6 +26,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
@@ -68,9 +69,11 @@ import com.zhihu.matisse.internal.ui.widget.AlbumsSpinner;
 import com.zhihu.matisse.internal.utils.MediaStoreCompat;
 import com.zhihu.matisse.internal.utils.PathUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import com.zhihu.matisse.internal.utils.SingleMediaScanner;
+import com.zhihu.matisse.listener.SelectionDelegate;
 
 import java.util.ArrayList;
 
@@ -190,8 +193,8 @@ public class MatisseActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         mAlbumCollection.onDestroy();
+        super.onDestroy();
     }
 
     @Override
@@ -244,18 +247,17 @@ public class MatisseActivity extends AppCompatActivity implements
                 updateBottomToolbar();
             }
         } else if (requestCode == REQUEST_CODE_CAPTURE || requestCode == REQUEST_CODE_CAPTURE_IMAGE || requestCode == REQUEST_CODE_CAPTURE_VIDEO) {
-            // Just pass the data back to previous calling Activity.
-            Uri contentUri = addMediaToGallery(this.getContentResolver(), new File(mMediaStoreCompat.getCurrentPhotoPath()));
-            if(contentUri == null){
-                return;
-            }
-            this.getContentResolver().notifyChange(contentUri, this.mObserver);
-            String path = mMediaStoreCompat.getCurrentPhotoPath();
+            Log.d(TAG, "i should be able to get the data here");
 
+            Uri contentUri = mMediaStoreCompat.getCurrentPhotoUri();
+            String path = mMediaStoreCompat.getCurrentPhotoPath();
             ArrayList<Uri> selected = new ArrayList<>();
             selected.add(contentUri);
             ArrayList<String> selectedPath = new ArrayList<>();
             selectedPath.add(path);
+
+            this.getContentResolver().notifyChange(contentUri, this.mObserver);
+
             Intent result = new Intent();
             result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selected);
             result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPath);
@@ -263,11 +265,15 @@ public class MatisseActivity extends AppCompatActivity implements
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
                 MatisseActivity.this.revokeUriPermission(contentUri,
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//            finish();
-            //refresh and select
-	        mAlbumCollection.loadAlbums();
-	        ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
-	        // add condition here where to select or not and broadcast message for the prompts
+
+            new SingleMediaScanner(this.getApplicationContext(), path, new SingleMediaScanner.ScanListener() {
+                @Override public void onScanFinish() {
+                    Log.i("SingleMediaScanner", "scan finish!");
+                }
+            });
+
+            ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
+            // add condition here where to select or not and broadcast message for the prompts
             if (selectedUris.size() < mSpec.maxImageSelectable) {
                 // broadcast message for camera roll
                 ArrayList<Item> tempSelection = AlbumMediaLoader.querySelection(this, selectedUris);
@@ -289,12 +295,11 @@ public class MatisseActivity extends AppCompatActivity implements
                     this.onUpdate(newlySelection.get(0));
                 }
             }
-	        // end
 
             ArrayList<Item> selection = AlbumMediaLoader.querySelection(this, selectedUris);
 
-	        int collectionType = mSelectedCollection.getCollectionType();
-	        mSelectedCollection.overwrite(selection, collectionType);
+            int collectionType = mSelectedCollection.getCollectionType();
+            mSelectedCollection.overwrite(selection, collectionType);
 
             Fragment fragment = MediaSelectionFragment.newInstance(mAlbum);
             getSupportFragmentManager()
@@ -303,70 +308,9 @@ public class MatisseActivity extends AppCompatActivity implements
                     .commitAllowingStateLoss();
             updateBottomToolbar();
 
+            // reload albums
+            mAlbumCollection.loadAlbums();
         }
-    }
-    public Uri addMediaToGallery(ContentResolver cr, File filepath) {
-        String type = getMimeType(filepath.getAbsolutePath());
-        if(type.contains("image")){
-            return addImageToGallery(cr, filepath, type);
-        }else if(type.contains("video")){
-            return addVideoToGallery(cr, filepath, type);
-
-        }
-        return null;
-    }
-
-    public Uri addImageToGallery(ContentResolver cr, File filepath, String type){
-        ExifInterface exifInterface = null;
-        try {
-            exifInterface = new ExifInterface(filepath.getAbsolutePath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, filepath.getName());
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, filepath.getName());
-        values.put(MediaStore.Images.Media.DESCRIPTION, "");
-
-        values.put(MediaStore.Images.Media.MIME_TYPE, type);
-        values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
-        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
-        values.put(MediaStore.Images.Media.DATA, filepath.toString());
-        if(exifInterface != null) {
-            values.put(MediaStore.Images.Media.ORIENTATION, getOrientation(exifInterface));
-            values.put(MediaStore.Images.Media.LATITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
-            values.put(MediaStore.Images.Media.LONGITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
-        }
-        return cr.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-    }
-
-    public Uri addVideoToGallery(ContentResolver cr, File filepath, String type){
-        ExifInterface exifInterface = null;
-        try {
-            exifInterface = new ExifInterface(filepath.getAbsolutePath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Video.Media.TITLE, filepath.getName());
-        values.put(MediaStore.Video.Media.DISPLAY_NAME, filepath.getName());
-        values.put(MediaStore.Video.Media.DESCRIPTION, "");
-        values.put(MediaStore.Video.Media.MIME_TYPE, type);
-        values.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis());
-        values.put(MediaStore.Video.Media.DATE_TAKEN, System.currentTimeMillis());
-        values.put(MediaStore.Video.Media.DATA, filepath.toString());
-        if(exifInterface != null) {
-            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
-            mediaMetadataRetriever.setDataSource(this, Uri.parse(filepath.getAbsolutePath()));
-
-            String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            values.put(MediaStore.Video.Media.DURATION, duration);
-            values.put(MediaStore.Video.Media.LATITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
-            values.put(MediaStore.Video.Media.LONGITUDE, exifInterface.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
-
-        }
-
-        return cr.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
     }
 
     /**
@@ -565,7 +509,6 @@ public class MatisseActivity extends AppCompatActivity implements
                         setPositiveButton(mSpec.alertPBtn, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-//                                Log.d("MATISSE", "Did Click OK");
                                 mSpec.isDontShowVideoAlert = true;
                                 mSpec.delegate.onTapItem(null, true);
                             }
@@ -595,9 +538,9 @@ public class MatisseActivity extends AppCompatActivity implements
 
     @Override
     public void capture() {
-        mSpec.onCameraSelected.cameraSelected();
+//        mSpec.onCameraSelected.cameraSelected();
         if (mMediaStoreCompat != null) {
-            if(mSpec.onlyShowImages()){
+            if(mSpec.onlyShowImages()) {
                 mMediaStoreCompat.dispatchCaptureIntent(MatisseActivity.this, MediaStore.ACTION_IMAGE_CAPTURE, REQUEST_CODE_CAPTURE_IMAGE);
             } else {
                 String[] options = {getResources().getString(R.string.photo), getResources().getString(R.string.video)};
@@ -622,4 +565,5 @@ public class MatisseActivity extends AppCompatActivity implements
 
         }
     }
+
 }
