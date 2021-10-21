@@ -129,7 +129,7 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
 
         Matisse.from(this)
                 .choose(mimeTypes, false)
-                .showSingleMediaType(true)
+                .showSingleMediaType(false)
                 .capture(capture)
                 .captureStrategy(
                         new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
