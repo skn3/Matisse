@@ -214,6 +214,7 @@ public class AlbumMediaLoader extends CursorLoader {
     }
 
     private static Cursor query(Context context, Uri uri) {
+        if (!uri.equals(Uri.EMPTY)) { return null; }
         return context.getContentResolver()
                 .query(QUERY_URI, PROJECTION,
                         MediaStore.Files.FileColumns._ID + "=?",
