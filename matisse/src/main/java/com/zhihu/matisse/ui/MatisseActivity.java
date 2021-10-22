@@ -265,6 +265,8 @@ public class MatisseActivity extends AppCompatActivity implements
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
                 MatisseActivity.this.revokeUriPermission(contentUri,
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            // reload albums
+            mAlbumCollection.loadAlbums();
 
             new SingleMediaScanner(this.getApplicationContext(), path, new SingleMediaScanner.ScanListener() {
                 @Override public void onScanFinish() {
@@ -272,30 +274,39 @@ public class MatisseActivity extends AppCompatActivity implements
                 }
             });
 
-            ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
-            // add condition here where to select or not and broadcast message for the prompts
-            if (selectedUris.size() < mSpec.maxImageSelectable) {
-                // broadcast message for camera roll
-                ArrayList<Item> tempSelection = AlbumMediaLoader.querySelection(this, selectedUris);
-                int nVideo = selectedVideos(tempSelection);
-                Boolean isSelected = false;
-                ArrayList<Uri> newlyCapture = new ArrayList<Uri>();
-                newlyCapture.add(contentUri);
-                ArrayList<Item> newlySelection = AlbumMediaLoader.querySelection(this, newlyCapture);
-                if (newlySelection.get(0).mimeType.equals(MimeType.MP4.toString())) {
-                    // check current selected count video
-                    if (nVideo < mSpec.maxVideoSelectable) {
-                        isSelected = true;
-                    }
-                } else {
-                    isSelected = true;
-                }
-                if (isSelected) {
-                    selectedUris.add(contentUri);
-                    this.onUpdate(newlySelection.get(0));
-                }
-            }
 
+//            ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
+//            // add condition here where to select or not and broadcast message for the prompts
+//            if (selectedUris.size() < mSpec.maxImageSelectable) {
+//                // broadcast message for camera roll
+//                ArrayList<Item> tempSelection = AlbumMediaLoader.querySelection(this, selectedUris);
+//                int nVideo = selectedVideos(tempSelection);
+//                Boolean isSelected = false;
+//                ArrayList<Uri> newlyCapture = new ArrayList<Uri>();
+//                newlyCapture.add(contentUri);
+//                try {
+//                    ArrayList<Item> newlySelection = AlbumMediaLoader.querySelection(this, newlyCapture);
+//                    if (!newlySelection.isEmpty()) {
+//                        if (newlySelection.get(0).mimeType.equals(MimeType.MP4.toString())) {
+//                            // check current selected count video
+//                            if (nVideo < mSpec.maxVideoSelectable) {
+//                                isSelected = true;
+//                            }
+//                        }
+//                    }
+//                    if (isSelected) {
+//                        selectedUris.add(contentUri);
+//                        this.onUpdate(newlySelection.get(0));
+//                    }
+//                    ArrayList<Item> selection = AlbumMediaLoader.querySelection(this, selectedUris);
+//
+//                    int collectionType = mSelectedCollection.getCollectionType();
+//                    mSelectedCollection.overwrite(selection, collectionType);
+//                } catch (Exception e) {
+//                    // do nothing
+//                }
+//            }
+            ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
             ArrayList<Item> selection = AlbumMediaLoader.querySelection(this, selectedUris);
 
             int collectionType = mSelectedCollection.getCollectionType();
@@ -307,9 +318,6 @@ public class MatisseActivity extends AppCompatActivity implements
                     .replace(R.id.container, fragment, MediaSelectionFragment.class.getSimpleName())
                     .commitAllowingStateLoss();
             updateBottomToolbar();
-
-            // reload albums
-            mAlbumCollection.loadAlbums();
         }
     }
 
