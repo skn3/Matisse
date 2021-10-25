@@ -1,5 +1,6 @@
 package com.zhihu.matisse.sample;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
@@ -11,12 +12,14 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.ImageEngine;
@@ -26,6 +29,7 @@ import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.model.SelectedItemCollection;
+import com.zhihu.matisse.listener.OnCameraSelected;
 import com.zhihu.matisse.listener.SelectionDelegate;
 
 import java.util.List;
@@ -34,7 +38,7 @@ import java.util.Set;
 /**
  * Custom Matisse
  */
-public class CustomMatisseActivity extends AppCompatActivity implements View.OnClickListener, SelectionDelegate {
+public class CustomMatisseActivity extends AppCompatActivity implements View.OnClickListener, SelectionDelegate, OnCameraSelected {
 
     private static final int REQUEST_CODE_CHOOSE = 23;
     private static final String TAG = CustomMatisseActivity.class.getSimpleName();
@@ -74,7 +78,24 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
+    public void cameraSelected() {
+    }
+
+    @Override
     public void onClick(View v) {
+        RxPermissions rxPermissions = new RxPermissions(this);
+        rxPermissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(aBoolean -> {
+                    if (aBoolean) {
+                        startAction(v);
+                    } else {
+                        Toast.makeText(this, R.string.permission_request_denied, Toast.LENGTH_LONG)
+                                .show();
+                    }
+                }, Throwable::printStackTrace);
+    }
+
+    private void startAction(View v) {
         CheckBox imageCheckBox = (CheckBox) findViewById(R.id.cb_choice_image);
         CheckBox videoCheckBox = (CheckBox) findViewById(R.id.cb_choice_video);
         RadioButton zhihuRadioButton = (RadioButton) findViewById(R.id.rb_theme_zhihu);
@@ -124,18 +145,22 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
             // custom theme
         }
 
+        String providerPath = getApplication().getPackageName() + ".provider";
+
         boolean countable = countableCheckBox.isChecked();
         boolean capture = captureCheckBox.isChecked();
 
         Matisse.from(this)
                 .choose(mimeTypes, false)
-                .showSingleMediaType(false)
+                .showSingleMediaType(true)
                 .capture(capture)
                 .captureStrategy(
-                        new CaptureStrategy(true, "com.zhihu.matisse.sample.fileprovider"))
+                        new CaptureStrategy(true, providerPath))
                 .countable(countable)
                 .maxSelectable(maxSelectable)
                 .enablePreview(false)
+                .imageEngine(new PicassoEngine())
+                .showUseOrigin(false)
 //                .maxSelectablePerMediaType(maxSelectable, maxVideoSeletable)
                 .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
                 .gridExpectedSize(
@@ -150,9 +175,10 @@ public class CustomMatisseActivity extends AppCompatActivity implements View.OnC
                 .maxVideoLength(120)
                 .hasFeatureEnabled(true)
                 .dontShowVideoAlert(false)
+                .setOnCameraSelectedListener(this)
                 .forResult(REQUEST_CODE_CHOOSE, mSelectedUris);
-
     }
+
 
     @Override
     public String getCause(SelectedItemCollection.MaxItemReach reach) {
