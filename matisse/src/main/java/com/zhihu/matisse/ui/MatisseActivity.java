@@ -248,6 +248,8 @@ public class MatisseActivity extends AppCompatActivity implements
                 updateBottomToolbar();
             }
         } else if (requestCode == REQUEST_CODE_CAPTURE || requestCode == REQUEST_CODE_CAPTURE_IMAGE || requestCode == REQUEST_CODE_CAPTURE_VIDEO) {
+/*
+    Note: deprecated usage of camera
             Log.d(TAG, "i should be able to get the data here");
 
             Uri contentUri = mMediaStoreCompat.getCurrentPhotoUri();
@@ -276,32 +278,34 @@ public class MatisseActivity extends AppCompatActivity implements
             });
 
             ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
-            // add condition here where to select or not and broadcast message for the prompts
-            if (selectedUris.size() < mSpec.maxImageSelectable) {
-                // broadcast message for camera roll
-                ArrayList<Item> tempSelection = AlbumMediaLoader.querySelection(this, selectedUris);
-                int nVideo = selectedVideos(tempSelection);
-                Boolean isSelected = false;
-                ArrayList<Uri> newlyCapture = new ArrayList<Uri>();
-                newlyCapture.add(contentUri);
-                try {
-                    ArrayList<Item> newlySelection = AlbumMediaLoader.querySelection(this, newlyCapture);
-                    if (!newlySelection.isEmpty()) {
-                        if (newlySelection.get(0).mimeType.equals(MimeType.MP4.toString())) {
-                            // check current selected count video
-                            if (nVideo < mSpec.maxVideoSelectable) {
-                                isSelected = true;
-                            }
-                        }
-                    }
-                    if (isSelected) {
-                        selectedUris.add(contentUri);
-                        this.onUpdate(newlySelection.get(0));
-                    }
-                } catch (Exception e) {
-                    // do nothing
-                }
-            }
+//            // add condition here where to select or not and broadcast message for the prompts
+//            if (selectedUris.size() < mSpec.maxImageSelectable) {
+//                // broadcast message for camera roll
+//                ArrayList<Item> tempSelection = AlbumMediaLoader.querySelection(this, selectedUris);
+//                int nVideo = selectedVideos(tempSelection);
+//                Boolean isSelected = false;
+//                try {
+//
+//                    if (newlySelection.get(0).mimeType.equals(MimeType.MP4.toString())) {
+//                        // check current selected count video
+//                        if (nVideo < mSpec.maxVideoSelectable) {
+//                            isSelected = true;
+//                        }
+//                    } else {
+//                        isSelected = true;
+//                    }
+//                    if (isSelected) {
+//                    }
+//                } catch (Exception e) {
+//                    // do nothing
+//                }
+//            }
+//            ArrayList<Uri> newlyCapture = new ArrayList<Uri>();
+//            newlyCapture.add(contentUri);
+//            ArrayList<Item> newlySelection = AlbumMediaLoader.querySelection(this, newlyCapture);
+//            selectedUris.add(contentUri);
+//            this.onUpdate(newlySelection.get(0));
+
             ArrayList<Item> selection = AlbumMediaLoader.querySelection(this, selectedUris);
             int collectionType = mSelectedCollection.getCollectionType();
             mSelectedCollection.overwrite(selection, collectionType);
@@ -318,7 +322,9 @@ public class MatisseActivity extends AppCompatActivity implements
                     .replace(R.id.container, fragment, MediaSelectionFragment.class.getSimpleName())
                     .commitAllowingStateLoss();
             updateBottomToolbar();
+ */
         }
+
     }
 
     /**
