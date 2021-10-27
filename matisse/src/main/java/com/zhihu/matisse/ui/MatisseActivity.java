@@ -106,6 +106,7 @@ public class MatisseActivity extends AppCompatActivity implements
     private TextView mButtonApply;
     private View mContainer;
     private View mEmptyView;
+    private Fragment fragment;
     private ContentObserver mObserver;
     private Handler mHandler;
     private Album mAlbum;
@@ -274,45 +275,44 @@ public class MatisseActivity extends AppCompatActivity implements
                 }
             });
 
-
-//            ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
-//            // add condition here where to select or not and broadcast message for the prompts
-//            if (selectedUris.size() < mSpec.maxImageSelectable) {
-//                // broadcast message for camera roll
-//                ArrayList<Item> tempSelection = AlbumMediaLoader.querySelection(this, selectedUris);
-//                int nVideo = selectedVideos(tempSelection);
-//                Boolean isSelected = false;
-//                ArrayList<Uri> newlyCapture = new ArrayList<Uri>();
-//                newlyCapture.add(contentUri);
-//                try {
-//                    ArrayList<Item> newlySelection = AlbumMediaLoader.querySelection(this, newlyCapture);
-//                    if (!newlySelection.isEmpty()) {
-//                        if (newlySelection.get(0).mimeType.equals(MimeType.MP4.toString())) {
-//                            // check current selected count video
-//                            if (nVideo < mSpec.maxVideoSelectable) {
-//                                isSelected = true;
-//                            }
-//                        }
-//                    }
-//                    if (isSelected) {
-//                        selectedUris.add(contentUri);
-//                        this.onUpdate(newlySelection.get(0));
-//                    }
-//                    ArrayList<Item> selection = AlbumMediaLoader.querySelection(this, selectedUris);
-//
-//                    int collectionType = mSelectedCollection.getCollectionType();
-//                    mSelectedCollection.overwrite(selection, collectionType);
-//                } catch (Exception e) {
-//                    // do nothing
-//                }
-//            }
             ArrayList<Uri> selectedUris = (ArrayList<Uri>) mSelectedCollection.asListOfUri();
+            // add condition here where to select or not and broadcast message for the prompts
+            if (selectedUris.size() < mSpec.maxImageSelectable) {
+                // broadcast message for camera roll
+                ArrayList<Item> tempSelection = AlbumMediaLoader.querySelection(this, selectedUris);
+                int nVideo = selectedVideos(tempSelection);
+                Boolean isSelected = false;
+                ArrayList<Uri> newlyCapture = new ArrayList<Uri>();
+                newlyCapture.add(contentUri);
+                try {
+                    ArrayList<Item> newlySelection = AlbumMediaLoader.querySelection(this, newlyCapture);
+                    if (!newlySelection.isEmpty()) {
+                        if (newlySelection.get(0).mimeType.equals(MimeType.MP4.toString())) {
+                            // check current selected count video
+                            if (nVideo < mSpec.maxVideoSelectable) {
+                                isSelected = true;
+                            }
+                        }
+                    }
+                    if (isSelected) {
+                        selectedUris.add(contentUri);
+                        this.onUpdate(newlySelection.get(0));
+                    }
+                } catch (Exception e) {
+                    // do nothing
+                }
+            }
             ArrayList<Item> selection = AlbumMediaLoader.querySelection(this, selectedUris);
-
             int collectionType = mSelectedCollection.getCollectionType();
             mSelectedCollection.overwrite(selection, collectionType);
 
-            Fragment fragment = MediaSelectionFragment.newInstance(mAlbum);
+            if (fragment != null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .remove(fragment)
+                        .commitAllowingStateLoss();
+            }
+            fragment = MediaSelectionFragment.newInstance(mAlbum);
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, fragment, MediaSelectionFragment.class.getSimpleName())
@@ -441,8 +441,8 @@ public class MatisseActivity extends AppCompatActivity implements
         mAlbumsAdapter.swapCursor(null);
     }
 
-    private Fragment fragment;
     private void onAlbumSelected(Album album) {
+        mAlbum = album;
         if (album.isAll() && album.isEmpty()) {
             mContainer.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
