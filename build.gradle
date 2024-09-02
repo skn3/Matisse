@@ -16,12 +16,16 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
-        jcenter()
         google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven {
+            url "https://maven.google.com"
+        }
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.4'
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath 'com.novoda:bintray-release:0.9.1'
         classpath group: 'com.layer', name: 'gradle-git-repo-plugin', version: '2.0.2'
     }
@@ -41,9 +45,9 @@ task clean(type: Delete) {
 ext {
     // SDK And Tools
     minSdkVersion = 23
-    targetSdkVersion = 30
+    targetSdkVersion = 32
     compileSdkVersion = 30 // 这个版本号必须和 supportLibraryVersion 的大版本号保持一致
-    buildToolsVersion = '28.0.3' // 这个和compileSdkVersion、supportLibraryVersion都无关
+    buildToolsVersion = '30.0.0' // 这个和compileSdkVersion、supportLibraryVersion都无关
     //Dependencies
     supportLibraryVersion = '28.0.3'
 }
