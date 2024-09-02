@@ -20,7 +20,7 @@ buildscript {
         mavenCentral()
         gradlePluginPortal()
         maven {
-            url "https://repo.spring.io/plugins-release/"
+            url 'https://repository.axelor.com/nexus/repository/maven-public/'
         }
         maven {
             url "https://maven.google.com"

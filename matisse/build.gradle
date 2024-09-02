@@ -73,6 +73,6 @@ dependencies {
 
     // ImmersionBar
     implementation 'com.gyf.barlibrary:barlibrary:2.3.0'
-    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.5@aar'
+    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:1.0.2@aar'
 
 }
